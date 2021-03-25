@@ -87,7 +87,7 @@ class GUI(Frame):
         
         self.enterEntry1 = tk.Entry(self.powerFrame1, width=7, textvariable= "")
         self.enterEntry1.grid(row=1, column=2, padx=5, pady=5)
-        #we waren hier
+       
         self.StartMotor1Button = tk.Button(self.powerFrame1, text="Start motor 1", command=lambda:[Motor_Thread.Run_Motor1(self), self.returnEntry(arg=None)]).grid(column=0,row=2, padx=5, pady=5)
         self.StopMotor1Button = tk.Button(self.powerFrame1, text="Stop Motor1", command=lambda:Motor_Thread.turnOffMotor1(self)).grid(row=2,column=1, padx=5, pady=5)
         
