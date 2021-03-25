@@ -463,7 +463,6 @@ class RemoteProg():
                 contents = f.read()
             exec(contents)
 
-class RemoteProg2():      
     def Remote():
         
         ### VICI position 1 ####
