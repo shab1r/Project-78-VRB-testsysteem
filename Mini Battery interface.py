@@ -463,6 +463,7 @@ class RemoteProg():
                 contents = f.read()
             exec(contents)
 
+#This is not for the battery and is irrelevant for us.
 class RemoteProg2():      
     def Remote():
         
