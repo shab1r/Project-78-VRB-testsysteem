@@ -1,17 +1,24 @@
+#=====GUI
 import tkinter as tk
 from tkinter import *
-from tkinter import ttk
+#=====time for the gui timer 
+import time
+from time import sleep
+from timeit import default_timer as timer
+#=====Motor kit
 from adafruit_motorkit import MotorKit
 from adafruit_motor import motor as MotorControl
-import time
+#=====Threads for the motor
 import threading
 from threading import Thread
-from time import sleep
+
+#=====?
 import random
 import math
 import turtle
 import csv
 import matplotlib
+#======For the graph
 matplotlib.use("tkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
@@ -21,12 +28,14 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import pylab
 import numpy as np
+#========For saving files
 import os
 from tkinter.filedialog import askdirectory
+#=======ExpanderPi stuff
 from ExpanderPi import ADC
 from ExpanderPi import DAC
-import time
-from timeit import default_timer as timer
+
+
 import glob,os
 
 kit = MotorKit()
@@ -229,7 +238,7 @@ class GUI(Frame):
         self.Start_Measurement = tk.Button(self.chargeFrame, bg="green2", width=15, text="Start Chromatogram", command=lambda:[RemoteProg2.Remote()]).grid(column=5, row=6, columnspan=2, padx=5, pady=5)
 
 
-### Performance time entry ###
+        ### Performance time entry ###
         
         self.enterEntry3 = tk.Entry(self.chargeFrame, width=7, textvariable= "")
         self.enterEntry3.grid(row=7, column=5, columnspan=2, padx=5, pady=5)
@@ -462,11 +471,6 @@ class RemoteProg():
             with open(script) as f:
                 contents = f.read()
             exec(contents)
-        
-        
-            
-    
-            
         
 class Charge():
     def __init3__(self, Ch):
