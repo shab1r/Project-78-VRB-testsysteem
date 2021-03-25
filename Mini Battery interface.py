@@ -220,7 +220,7 @@ class GUI(Frame):
         self.Chargeentry = tk.Entry(self.chargeFrame, width=20, textvariable=Ch)
         self.Chargeentry.grid(row=2, column=5, columnspan = 2, padx=5, pady=5)
         
-        self.StartCharge = tk.Button(self.chargeFrame, text="Start", command=lambda:Charge.Charge1()).grid(column=5,row=3, padx=5, pady=5)
+        self.StartCharge = tk.Button(self.chargeFrame, text="Start", command=lambda:Charge. ()).grid(column=5,row=3, padx=5, pady=5)
         self.Stopcharge = tk.Button(self.chargeFrame, text="Stop", command=lambda:Charge.Charge1_stop(self)).grid(row=3,column=6, padx=5, pady=5)
         
         self.Chargeentry.insert(0, "")
@@ -490,6 +490,7 @@ class Charge():
                 if period>100:
                     period=0
                     break
+            return 0
         
     def Charge1_stop(self):    
         period=0

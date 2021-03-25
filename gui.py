@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import ttk
 
 from Battery import *
+from Motor import *
 
 class GUI(Frame):    
     
@@ -86,7 +87,7 @@ class GUI(Frame):
         
         self.enterEntry1 = tk.Entry(self.powerFrame1, width=7, textvariable= "")
         self.enterEntry1.grid(row=1, column=2, padx=5, pady=5)
-        
+        #we waren hier
         self.StartMotor1Button = tk.Button(self.powerFrame1, text="Start motor 1", command=lambda:[Motor_Thread.Run_Motor1(self), self.returnEntry(arg=None)]).grid(column=0,row=2, padx=5, pady=5)
         self.StopMotor1Button = tk.Button(self.powerFrame1, text="Stop Motor1", command=lambda:Motor_Thread.turnOffMotor1(self)).grid(row=2,column=1, padx=5, pady=5)
         
@@ -182,7 +183,7 @@ class GUI(Frame):
         self.Chargeentry.insert(0, "")
         
         ##### Start Measurement Button #####
-            
+            #wat doet return entry
         self.Start_Measurement = tk.Button(self.chargeFrame, bg="green2", width=15, text="Start Measurement", command=lambda:[self.StartTime(), Motor_Thread.Run_BothMotors(self), DynamicUpdate_Bat1.__callBat1__(self), self.returnEntry(arg=None), self.returnEntry2(arg=None),self.returnEntry3(arg=None), Charge.Charge1(self)]).grid(column=5, row=4, columnspan=2, padx=5, pady=5)
         self.Stop_Measurement = tk.Button(self.chargeFrame, bg="red", width =15, text="Stop Measurement", command=lambda:[self.pause3(), Motor_Thread.turnBothMotorsOff(self), Charge.Charge1_stop(self)]).grid(row=5,column=5, columnspan=2, padx=5, pady=5)
         self.Show_Graph = tk.Button(self.chargeFrame, bg="gold", width=15, text="Plot Temperature", command=lambda:DynamicUpdate.__call__(self)).grid(column=5,row=6, columnspan=2, padx=5, pady=5)

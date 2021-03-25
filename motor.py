@@ -4,7 +4,8 @@ from adafruit_motor import motor as MotorControl
 #=====Threads for the motor
 import threading
 from threading import Thread
-
+from ExpanderPi import ADC
+from ExpanderPi import DAC
 class Motor_Thread():
     def __init2__(self, Power1, Time1, Power2, Time2):
         self.Run_Motor1()
