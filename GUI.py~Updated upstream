@@ -1,12 +1,36 @@
+#yooo
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-
-from Battery import *
-from Motor import *
+# from adafruit_motorkit import MotorKit
+# from adafruit_motor import motor as MotorControl
+import time
+import threading
+from threading import Thread
+from time import sleep
+import random
+import math
+import turtle
+import csv
+import matplotlib
+matplotlib.use("tkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import pylab
+import numpy as np
+import os
+from tkinter.filedialog import askdirectory
+# from ExpanderPi import ADC
+# from ExpanderPi import DAC
+import time
+from timeit import default_timer as timer
+import glob,os
 
 class GUI(Frame):    
-    
     def __init__(self,master=None):
         Frame.__init__(self,master)
         self.grid()
@@ -87,7 +111,7 @@ class GUI(Frame):
         
         self.enterEntry1 = tk.Entry(self.powerFrame1, width=7, textvariable= "")
         self.enterEntry1.grid(row=1, column=2, padx=5, pady=5)
-       
+        
         self.StartMotor1Button = tk.Button(self.powerFrame1, text="Start motor 1", command=lambda:[Motor_Thread.Run_Motor1(self), self.returnEntry(arg=None)]).grid(column=0,row=2, padx=5, pady=5)
         self.StopMotor1Button = tk.Button(self.powerFrame1, text="Stop Motor1", command=lambda:Motor_Thread.turnOffMotor1(self)).grid(row=2,column=1, padx=5, pady=5)
         
@@ -183,7 +207,7 @@ class GUI(Frame):
         self.Chargeentry.insert(0, "")
         
         ##### Start Measurement Button #####
-            #wat doet return entry
+            
         self.Start_Measurement = tk.Button(self.chargeFrame, bg="green2", width=15, text="Start Measurement", command=lambda:[self.StartTime(), Motor_Thread.Run_BothMotors(self), DynamicUpdate_Bat1.__callBat1__(self), self.returnEntry(arg=None), self.returnEntry2(arg=None),self.returnEntry3(arg=None), Charge.Charge1(self)]).grid(column=5, row=4, columnspan=2, padx=5, pady=5)
         self.Stop_Measurement = tk.Button(self.chargeFrame, bg="red", width =15, text="Stop Measurement", command=lambda:[self.pause3(), Motor_Thread.turnBothMotorsOff(self), Charge.Charge1_stop(self)]).grid(row=5,column=5, columnspan=2, padx=5, pady=5)
         self.Show_Graph = tk.Button(self.chargeFrame, bg="gold", width=15, text="Plot Temperature", command=lambda:DynamicUpdate.__call__(self)).grid(column=5,row=6, columnspan=2, padx=5, pady=5)
@@ -193,17 +217,18 @@ class GUI(Frame):
         self.chargeFrame = tk.LabelFrame(root,  text='Chromatography start')
         self.chargeFrame.grid(row=5, column=5, columnspan = 2, rowspan = 2, padx=5, pady=5)
         self.Start_Measurement = tk.Button(self.chargeFrame, bg="green2", width=15, text="Start Chromatogram", command=lambda:[RemoteProg2.Remote()]).grid(column=5, row=6, columnspan=2, padx=5, pady=5)
-        
-        ### Performance time entry ###
 
+
+### Performance time entry ###
+        
         self.enterEntry3 = tk.Entry(self.chargeFrame, width=7, textvariable= "")
         self.enterEntry3.grid(row=7, column=5, columnspan=2, padx=5, pady=5)
 
         self.enterEntry1.insert(0, "")
         self.enterEntry2.insert(0, "")
         self.enterEntry3.insert(0, "")
-
-            def update_time(self):
+    
+    def update_time(self):
           
         if (self.running == True):
             
@@ -319,13 +344,13 @@ class GUI(Frame):
     
         global Signal
         
-        Signal = adc.read_adc_voltage(8,0)
+        # Signal = adc.read_adc_voltage(8,0)
     
     def SignalSet(self):
         
         global ChromS
         
-        ChromS = (adc.read_adc_voltage(8,0) - Signal)
+        # ChromS = (adc.read_adc_voltage(8,0) - Signal)
         
         root.after(100, self.SignalSet)
     
@@ -352,7 +377,7 @@ class GUI(Frame):
         
         global T
         
-        T = (adc.read_adc_voltage(1,0)-1.25)/0.005
+        # T = (adc.read_adc_voltage(1,0)-1.25)/0.005
         
         self.tempString = str(round(T, 2))
         self.TemperatureLabel.config(text=self.tempString)
@@ -363,7 +388,7 @@ class GUI(Frame):
         
         global Bat1
         
-        Bat1 = adc.read_adc_voltage(8,0)
+        # Bat1 = adc.read_adc_voltage(8,0)
         
         self.Bat1String = Bat1
         self.Battery1Label.config(text=self.Bat1String)
@@ -372,7 +397,7 @@ class GUI(Frame):
         
     def Battery_2(self):
           
-        Bat2 = adc.read_adc_voltage(3,0)
+        # Bat2 = adc.read_adc_voltage(3,0)
         
         self.Bat2String = str(round(Bat2, 2))
         self.Battery2Label.config(text=self.Bat2String)

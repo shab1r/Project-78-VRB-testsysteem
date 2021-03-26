@@ -1,55 +1,7 @@
-#=====GUI
-import tkinter as tk
-from tkinter import *
-#=====time for the gui timer 
-import time
-from time import sleep
-from timeit import default_timer as timer
-#=====Motor kit
-from adafruit_motorkit import MotorKit
-from adafruit_motor import motor as MotorControl
-#=====Threads for the motor
-import threading
-from threading import Thread
-
-#=====?
-import random
-import math
-import turtle
-import csv
-import matplotlib
-#======For the graph
-matplotlib.use("tkAgg")
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-import pylab
-import numpy as np
-#========For saving files
-import os
-from tkinter.filedialog import askdirectory
-#=======ExpanderPi stuff
-from ExpanderPi import ADC
-from ExpanderPi import DAC
+import Boostrap
 
 
-import glob,os
-
-kit = MotorKit()
-mp = []
-adc = ADC()
-dac = DAC(2)
-plt.ion()
-min_y = 0
-max_y = 40
-
-min2_y = -4
-max2_y = 4
-
-class GUI(Frame):    
+class GUI(Frame):
     def __init__(self,master=None):
         Frame.__init__(self,master)
         self.grid()
@@ -130,7 +82,7 @@ class GUI(Frame):
         
         self.enterEntry1 = tk.Entry(self.powerFrame1, width=7, textvariable= "")
         self.enterEntry1.grid(row=1, column=2, padx=5, pady=5)
-        
+       
         self.StartMotor1Button = tk.Button(self.powerFrame1, text="Start motor 1", command=lambda:[Motor_Thread.Run_Motor1(self), self.returnEntry(arg=None)]).grid(column=0,row=2, padx=5, pady=5)
         self.StopMotor1Button = tk.Button(self.powerFrame1, text="Stop Motor1", command=lambda:Motor_Thread.turnOffMotor1(self)).grid(row=2,column=1, padx=5, pady=5)
         
@@ -220,13 +172,13 @@ class GUI(Frame):
         self.Chargeentry = tk.Entry(self.chargeFrame, width=20, textvariable=Ch)
         self.Chargeentry.grid(row=2, column=5, columnspan = 2, padx=5, pady=5)
         
-        self.StartCharge = tk.Button(self.chargeFrame, text="Start", command=lambda:Charge. ()).grid(column=5,row=3, padx=5, pady=5)
+        self.StartCharge = tk.Button(self.chargeFrame, text="Start", command=lambda:Charge.Charge1()).grid(column=5,row=3, padx=5, pady=5)
         self.Stopcharge = tk.Button(self.chargeFrame, text="Stop", command=lambda:Charge.Charge1_stop(self)).grid(row=3,column=6, padx=5, pady=5)
         
         self.Chargeentry.insert(0, "")
         
         ##### Start Measurement Button #####
-            
+            #wat doet return entry
         self.Start_Measurement = tk.Button(self.chargeFrame, bg="green2", width=15, text="Start Measurement", command=lambda:[self.StartTime(), Motor_Thread.Run_BothMotors(self), DynamicUpdate_Bat1.__callBat1__(self), self.returnEntry(arg=None), self.returnEntry2(arg=None),self.returnEntry3(arg=None), Charge.Charge1(self)]).grid(column=5, row=4, columnspan=2, padx=5, pady=5)
         self.Stop_Measurement = tk.Button(self.chargeFrame, bg="red", width =15, text="Stop Measurement", command=lambda:[self.pause3(), Motor_Thread.turnBothMotorsOff(self), Charge.Charge1_stop(self)]).grid(row=5,column=5, columnspan=2, padx=5, pady=5)
         self.Show_Graph = tk.Button(self.chargeFrame, bg="gold", width=15, text="Plot Temperature", command=lambda:DynamicUpdate.__call__(self)).grid(column=5,row=6, columnspan=2, padx=5, pady=5)
@@ -236,30 +188,29 @@ class GUI(Frame):
         self.chargeFrame = tk.LabelFrame(root,  text='Chromatography start')
         self.chargeFrame.grid(row=5, column=5, columnspan = 2, rowspan = 2, padx=5, pady=5)
         self.Start_Measurement = tk.Button(self.chargeFrame, bg="green2", width=15, text="Start Chromatogram", command=lambda:[RemoteProg2.Remote()]).grid(column=5, row=6, columnspan=2, padx=5, pady=5)
-
-
-        ### Performance time entry ###
         
+        ### Performance time entry ###
+
         self.enterEntry3 = tk.Entry(self.chargeFrame, width=7, textvariable= "")
         self.enterEntry3.grid(row=7, column=5, columnspan=2, padx=5, pady=5)
 
         self.enterEntry1.insert(0, "")
         self.enterEntry2.insert(0, "")
         self.enterEntry3.insert(0, "")
-    
-    def update_time(self):
+
+        def update_time(self):
           
-        if (self.running == True):
+            if (self.running == True):
             
-            self.timer[2] += 1
-            
-            if(self.timer[2] >=100):
-                self.timer[2] = 0
-                self.timer[1] += 1
-            
-            if(self.timer[1] >= 60):
-                self.timer[0] += 1
-                self.timer[1] = 0
+                self.timer[2] += 1
+                
+                if(self.timer[2] >=100):
+                    self.timer[2] = 0
+                    self.timer[1] += 1
+                
+                if(self.timer[1] >= 60):
+                    self.timer[0] += 1
+                    self.timer[1] = 0
             
             self.timeString = str(self.timer[0]) + ':' + str(self.timer[1]) + ':'+ str(self.timer[2])
             self.show.config(text=self.timeString)
@@ -422,174 +373,3 @@ class GUI(Frame):
         self.Battery2Label.config(text=self.Bat2String)
         
         root.after(1000, self.Battery_2)
-
-        
-class Motor_Thread():
-    def __init2__(self, Power1, Time1, Power2, Time2):
-        self.Run_Motor1()
-        self.Power1 = Power1
-        self.Power2 = Power2
-        self.Time1 = Time1
-        self.Time2 = Time2
-        
-     
-    def Run_Motor1(self):
-        kit.motor1.throttle = Power1.get()
-        GUI.start(self)
-
-    def Run_Motor2(self):
-        kit.motor2.throttle = Power2.get()
-        GUI.start2(self)
-    
-    def Run_BothMotors(self):
-        kit.motor1.throttle = Power1.get()
-        kit.motor2.throttle = Power2.get()
-        GUI.start(self)
-        GUI.start2(self)
-        GUI.start3(self)
-    
-    def turnOffMotor1(self):
-        kit.motor1.throttle = 0.0
-        GUI.pause(self)
-        GUI.pause3(self)
-    
-    def turnOffMotor2(self):
-        kit.motor2.throttle = 0.0
-        GUI.pause2(self)
-        
-    def turnBothMotorsOff(self):
-        kit.motor1.throttle = 0.0
-        kit.motor2.throttle = 0.0
-        GUI.pause(self)
-        GUI.pause3(self)
-        GUI.pause2(self)
-        
-class RemoteProg():
-    def Remote():
-        os.chdir("/home/pi/Downloads/Pythonfile/Chromatography software/")
-        for script in ["Chromatogram2.py"]:
-            with open(script) as f:
-                contents = f.read()
-            exec(contents)
-        
-class Charge():
-    def __init3__(self, Ch):
-        self.Charge1()
-        self.Charge1_stop()
-        self.running6 = False
-        self.Start6()
-        
-    def Charge1():
-        period=0
-        running6 = True        
-        if (running6 == True):
-            while True:
-                period+=1
-                dac.set_dac_voltage(2, Ch.get())
-                print ("This While True works")
-                if period>100:
-                    period=0
-                    break
-            return 0
-        
-    def Charge1_stop(self):    
-        period=0
-        self.running6 = True        
-        if (self.running6 == True):
-            while True:
-                period+=1
-                dac.set_dac_voltage(2, 0.0)
-                print ("This While True works")
-                if period>100:
-                    period=0
-                    break
-        
-
-class DynamicUpdate():
-    
-    def on_launch(self):
-        #Set up plot
-        self.figure, self.ax = plt.subplots()
-        self.lines, = self.ax.plot([],[], 'o')
-        self.ax.set_ylabel('Temperature (°C)')
-        self.ax.set_xlabel('Time (sec)')
-        #Autoscale on unknown axis and known lims on the other
-        self.ax.set_autoscaley_on(True)
-               
-        self.ax.set_ylim(min_y, max_y)
-        #Other stuff
-        self.ax.grid()
-        ...
-
-    def on_running(self, xdata, ydata):
-        #Update data (with the new _and_ the old points)
-        self.lines.set_xdata(xdata)
-        self.lines.set_ydata(ydata)
-        #Need both of these in order to rescale
-        self.ax.relim()
-        self.ax.autoscale_view()
-        #We need to draw *and* flush
-        self.figure.canvas.draw()
-        self.figure.canvas.flush_events()
-    
-    #Example
-    def __call__(self):
-        
-        DynamicUpdate.on_launch(self)
-        xdata = []
-        ydata = []
-        for x in np.arange(0,3600,0.5):
-            xdata.append(time.time())
-            ydata.append((adc.read_adc_voltage(1,0)-1.25)/0.005)
-            DynamicUpdate.on_running(self, xdata, ydata)
-            plt.pause(5)
-        return xdata, ydata
-
-class DynamicUpdate_Bat1():
-    
-    def on_launch_Bat1(self):
-        #Set up plot
-        self.figure, self.ax = plt.subplots(num="Chromatogram 1")
-        self.lines, = self.ax.plot([],[])
-        
-        
-        self.ax.set_ylabel('Voltage (V)')
-        self.ax.set_xlabel('Time (sec)')
-        #Autoscale on unknown axis and known lims on the other
-        self.ax.set_autoscaley_on(True)
-               
-        self.ax.set_ylim(min2_y, max2_y)
-        #Other stuff
-        self.ax.grid()
-        ...
-
-    def on_running_Bat1(self, xdata, ydata):
-        #Update data (with the new _and_ the old points)
-        self.lines.set_xdata(xdata)
-        self.lines.set_ydata(ydata)
-        #Need both of these in order to rescale
-        self.ax.relim()
-        self.ax.autoscale_view()
-        #We need to draw *and* flush
-        self.figure.canvas.draw()
-        self.figure.canvas.flush_events()
-    
-    #Example
-    def __callBat1__(self):
-        
-        DynamicUpdate_Bat1.on_launch_Bat1(self)
-        xdata = []
-        ydata = []
-        for x in np.arange(0,3600,0.5):
-            xdata.append(TimeS)
-            ydata.append(ChromS)
-            DynamicUpdate_Bat1.on_running_Bat1(self, xdata, ydata)
-            plt.pause(0.5)
-        return xdata, ydata
-
-root = tk.Tk()
-up = GUI(root)
-root.title('Chromatography software')
-
-
-root.mainloop()
