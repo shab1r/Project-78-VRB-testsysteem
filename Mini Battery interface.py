@@ -99,7 +99,9 @@ class GUI(Frame):
         
         ##### widget for counter motor 1#####
         
-        self.show = tk.Label(self.powerFrame1, width=7, text='00:00:00', background="black", foreground="yellow", font=('Helvetica',30))
+        self.label_power1 = tk.Label(self.powerFrame1, text="Timer")
+        self.label_power1.grid(row=2, column=0, padx=5, pady=5)
+        self.show = tk.Label(self.powerFrame1, width=7, text='00:00:00', background="black", foreground="yellow", font=('Helvetica',20))
         self.show.grid(row=3, column=0, padx=5, pady=5)
         
 #         self.Startstopwatch = tk.Button(self.powerFrame1, text="Start", command=self.start).grid(column=1,row=3, padx=5, pady=5)
@@ -119,19 +121,21 @@ class GUI(Frame):
         self.enterEntry2 = tk.Entry(self.powerFrame2, width=7, textvariable= "")
         self.enterEntry2.grid(row=4, column=2, padx=5, pady=5)
         
-        self.StartMotor2Button = tk.Button(self.powerFrame2, text="Start Motor 2", command=lambda:[Motor_Thread.Run_Motor2(self), self.returnEntry2(arg=None)]).grid(column=0,row=5, padx=5, pady=5)
-        self.StopMotor2Button = tk.Button(self.powerFrame2, text="Stop Motor 2", command=lambda:Motor_Thread.turnOffMotor2(self)).grid(row=5,column=1, padx=5, pady=5)
+        self.StartMotor2Button = tk.Button(self.powerFrame2, text="Start Motor 2", command=lambda:[Motor_Thread.Run_Motor2(self), self.returnEntry2(arg=None)]).grid(column=2,row=5, padx=5, pady=5)
+        self.StopMotor2Button = tk.Button(self.powerFrame2, text="Stop Motor 2", command=lambda:Motor_Thread.turnOffMotor2(self)).grid(row=6,column=2, padx=5, pady=5)
         
         self.enterEntry2.insert(0, "")
         self.Powerentry2.insert(0, "")
         
         ##### widget for counter motor 2 #####
-                    
+        
+        self.label_power2 = tk.Label(self.powerFrame2, text="Timer")
+        self.label_power2.grid(row=5, column=0, padx=5, pady=5)     
         self.show2 = tk.Label(self.powerFrame2, width=7, text='00:00:00', background="black", foreground="yellow", font=('Helvetica',20))
         self.show2.grid(row=6, column=0, padx=5, pady=5)
         
 #         self.Startstopwatch2 = tk.Button(self.powerFrame2, text="Start", command=self.start2).grid(column=1,row=6, padx=5, pady=5)
-        self.Startstopwatch2 = tk.Button(self.powerFrame2, text="Reset", command=self.resetTime2).grid(column=2,row=5, padx=5, pady=5)
+        self.Startstopwatch2 = tk.Button(self.powerFrame2, text="Reset", command=self.resetTime2).grid(column=2,row=7, padx=5, pady=5)
         
         ##### start/stop both motors #####
         
@@ -390,11 +394,7 @@ class GUI(Frame):
         self.Battery2Label.config(text=self.Bat2String)
         
         root.after(1000, self.Battery_2)
-        
-    def MessageBox(title, text):
-        return tk.messagebox.showwarning(title, text)
 
-        
 class Motor_Thread():
     def __init2__(self, Power1, Time1, Power2, Time2):
         self.Run_Motor1()
