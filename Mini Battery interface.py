@@ -91,19 +91,19 @@ class GUI(Frame):
         self.enterEntry1 = tk.Entry(self.powerFrame1, width=7, textvariable= "")
         self.enterEntry1.grid(row=1, column=2, padx=5, pady=5)
         
-        self.StartMotor1Button = tk.Button(self.powerFrame1, text="Start motor 1", command=lambda:[Motor_Thread.Run_Motor1(self), self.returnEntry(arg=None)]).grid(column=0,row=2, padx=5, pady=5)
-        self.StopMotor1Button = tk.Button(self.powerFrame1, text="Stop Motor1", command=lambda:Motor_Thread.turnOffMotor1(self)).grid(row=2,column=1, padx=5, pady=5)
+        self.StartMotor1Button = tk.Button(self.powerFrame1, text="Start motor 1", command=lambda:[Motor_Thread.Run_Motor1(self), self.returnEntry(arg=None)]).grid(column=2,row=2, padx=5, pady=5)
+        self.StopMotor1Button = tk.Button(self.powerFrame1, text="Stop Motor1", command=lambda:Motor_Thread.turnOffMotor1(self)).grid(row=3,column=2, padx=5, pady=5)
         
         self.enterEntry1.insert(0, "")
         self.Powerentry.insert(0, "")
         
         ##### widget for counter motor 1#####
         
-        self.show = tk.Label(self.powerFrame1, width=7, text='00:00:00', background="black", foreground="yellow", font=('Helvetica',20))
+        self.show = tk.Label(self.powerFrame1, width=7, text='00:00:00', background="black", foreground="yellow", font=('Helvetica',30))
         self.show.grid(row=3, column=0, padx=5, pady=5)
         
-        self.Startstopwatch = tk.Button(self.powerFrame1, text="Start", command=self.start).grid(column=1,row=3, padx=5, pady=5)
-        self.Startstopwatch = tk.Button(self.powerFrame1, text="Reset", command=self.resetTime).grid(column=2,row=3, padx=5, pady=5)
+#         self.Startstopwatch = tk.Button(self.powerFrame1, text="Start", command=self.start).grid(column=1,row=3, padx=5, pady=5)
+        self.Startstopwatch = tk.Button(self.powerFrame1, text="Reset", command=self.resetTime).grid(column=2,row=4, padx=5, pady=5)
         
         ##### power control motor 2 #####
 
@@ -130,8 +130,8 @@ class GUI(Frame):
         self.show2 = tk.Label(self.powerFrame2, width=7, text='00:00:00', background="black", foreground="yellow", font=('Helvetica',20))
         self.show2.grid(row=6, column=0, padx=5, pady=5)
         
-        self.Startstopwatch2 = tk.Button(self.powerFrame2, text="Start", command=self.start2).grid(column=1,row=6, padx=5, pady=5)
-        self.Startstopwatch2 = tk.Button(self.powerFrame2, text="Reset", command=self.resetTime2).grid(column=2,row=6, padx=5, pady=5)
+#         self.Startstopwatch2 = tk.Button(self.powerFrame2, text="Start", command=self.start2).grid(column=1,row=6, padx=5, pady=5)
+        self.Startstopwatch2 = tk.Button(self.powerFrame2, text="Reset", command=self.resetTime2).grid(column=2,row=5, padx=5, pady=5)
         
         ##### start/stop both motors #####
         
@@ -258,7 +258,12 @@ class GUI(Frame):
         root.after(10, self.update_time2)
         
     def start2(self):
-        self.running2 = True
+        if  1.0 >= Power2.get() > 0.0 :
+            self.running2 = True
+        else:
+            messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0")
+    
+
     
     def pause2(self):
         self.running2 = False
