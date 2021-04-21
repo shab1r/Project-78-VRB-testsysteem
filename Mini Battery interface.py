@@ -1,39 +1,10 @@
-import tkinter as tk
-from tkinter import *
-from tkinter import ttk
-from adafruit_motorkit import MotorKit
-from adafruit_motor import motor as MotorControl
-import time
-import threading
-from threading import Thread
-from time import sleep
-import random
-import math
-import turtle
-import csv
-import matplotlib
-matplotlib.use("tkAgg")
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-import pylab
-import numpy as np
-import os
-from tkinter.filedialog import askdirectory
-from ExpanderPi import ADC
-from ExpanderPi import DAC
-import time
-from timeit import default_timer as timer
-import glob,os
+from lib import *
 
-kit = MotorKit()
+# kit = MotorKit()
 mp = []
-adc = ADC()
-dac = DAC(2)
-plt.ion()
+# adc = ADC()
+# dac = DAC(2)
+# plt.ion()
 min_y = 0
 max_y = 40
 
@@ -354,13 +325,13 @@ class GUI(Frame):
     
         global Signal
         
-        Signal = adc.read_adc_voltage(8,0)
+        # Signal = adc.read_adc_voltage(8,0)
     
     def SignalSet(self):
         
         global ChromS
         
-        ChromS = (adc.read_adc_voltage(8,0) - Signal)
+        # ChromS = (adc.read_adc_voltage(8,0) - Signal)
         
         root.after(100, self.SignalSet)
     
@@ -387,7 +358,7 @@ class GUI(Frame):
         
         global T
         
-        T = (adc.read_adc_voltage(1,0)-1.25)/0.005
+        # T = (adc.read_adc_voltage(1,0)-1.25)/0.005
         
         self.tempString = str(round(T, 2))
         self.TemperatureLabel.config(text=self.tempString)
@@ -398,7 +369,7 @@ class GUI(Frame):
         
         global Bat1
         
-        Bat1 = adc.read_adc_voltage(8,0)
+        # Bat1 = adc.read_adc_voltage(8,0)
         
         self.Bat1String = Bat1
         self.Battery1Label.config(text=self.Bat1String)
@@ -407,7 +378,7 @@ class GUI(Frame):
         
     def Battery_2(self):
           
-        Bat2 = adc.read_adc_voltage(3,0)
+        # Bat2 = adc.read_adc_voltage(3,0)
         
         self.Bat2String = str(round(Bat2, 2))
         self.Battery2Label.config(text=self.Bat2String)
@@ -425,32 +396,32 @@ class Motor_Thread():
         
      
     def Run_Motor1(self):
-        kit.motor1.throttle = Power1.get()
+        # kit.motor1.throttle = Power1.get()
         GUI.start(self)
 
     def Run_Motor2(self):
-        kit.motor2.throttle = Power2.get()
+        # kit.motor2.throttle = Power2.get()
         GUI.start2(self)
     
     def Run_BothMotors(self):
-        kit.motor1.throttle = Power1.get()
-        kit.motor2.throttle = Power2.get()
+        # kit.motor1.throttle = Power1.get()
+        # kit.motor2.throttle = Power2.get()
         GUI.start(self)
         GUI.start2(self)
         GUI.start3(self)
     
     def turnOffMotor1(self):
-        kit.motor1.throttle = 0.0
+        # kit.motor1.throttle = 0.0
         GUI.pause(self)
         GUI.pause3(self)
     
     def turnOffMotor2(self):
-        kit.motor2.throttle = 0.0
+        # kit.motor2.throttle = 0.0
         GUI.pause2(self)
         
     def turnBothMotorsOff(self):
-        kit.motor1.throttle = 0.0
-        kit.motor2.throttle = 0.0
+        # kit.motor1.throttle = 0.0
+        # kit.motor2.throttle = 0.0
         GUI.pause(self)
         GUI.pause3(self)
         GUI.pause2(self)
@@ -467,11 +438,11 @@ class RemoteProg():
         
         ### VICI position 1 ####
     
-        dac = DAC(2)
+        # dac = DAC(2)
         period=0
         while True:
             period+=1
-            dac.set_dac_voltage(2, 1.0)
+            # dac.set_dac_voltage(2, 1.0)
             print ("VICI 1 - ON")
             if period>100:
                 period=0
@@ -480,7 +451,7 @@ class RemoteProg():
         period=0
         while True:
             period+=1
-            dac.set_dac_voltage(2, 0.0)
+            # dac.set_dac_voltage(2, 0.0)
             print ("VICI 1 - OFF")
             if period>100:
                 period=0
@@ -488,11 +459,11 @@ class RemoteProg():
             
         #### VICI position 2 ####
         
-        dac = DAC(1)
+        # dac = DAC(1)
         period=0
         while True:
             period+=1
-            dac.set_dac_voltage(1, 1.0)
+            # dac.set_dac_voltage(1, 1.0)
             print ("VICI 2 - ON")
             if period>100:
                 period=0
@@ -501,7 +472,7 @@ class RemoteProg():
         period=0
         while True:
             period+=1
-            dac.set_dac_voltage(1, 0.0)
+            # dac.set_dac_voltage(1, 0.0)
             print ("VICI 2 - OFF")
             if period>100:
                 period=0
@@ -580,7 +551,7 @@ class Charge():
         if (running6 == True):
             while True:
                 period+=1
-                dac.set_dac_voltage(2, Ch.get())
+                # dac.set_dac_voltage(2, Ch.get())
                 print ("This While True works")
                 if period>100:
                     period=0
@@ -592,7 +563,7 @@ class Charge():
         if (self.running6 == True):
             while True:
                 period+=1
-                dac.set_dac_voltage(2, 0.0)
+                # dac.set_dac_voltage(2, 0.0)
                 print ("This While True works")
                 if period>100:
                     period=0
@@ -634,7 +605,7 @@ class DynamicUpdate():
         ydata = []
         for x in np.arange(0,3600,0.5):
             xdata.append(time.time())
-            ydata.append((adc.read_adc_voltage(1,0)-1.25)/0.005)
+            # ydata.append((adc.read_adc_voltage(1,0)-1.25)/0.005)
             DynamicUpdate.on_running(self, xdata, ydata)
             plt.pause(5)
         return xdata, ydata
