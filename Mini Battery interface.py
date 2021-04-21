@@ -40,9 +40,7 @@ class GUI(Frame):
         self.SignalSet()
         running6 = False
         ST = self.StartTime()
-        
-        
-            
+         
     def widgets(self):
         
         global Power1
@@ -215,7 +213,7 @@ class GUI(Frame):
             
             self.timer[2] += 1
             
-            if(self.timer[2] >=100):
+            if(self.timer[2] >=10):
                 self.timer[2] = 0
                 self.timer[1] += 1
             
@@ -228,7 +226,10 @@ class GUI(Frame):
         root.after(10, self.update_time)
     
     def start(self):
-        self.running = True
+        if  1.0 >= Power1.get() > 0.0 :
+            self.running = True
+        else:
+            messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0")
     
     def pause(self):
         self.running = False
@@ -237,14 +238,14 @@ class GUI(Frame):
         self.running = False
         self.timer = [0,0,0]
         self.show.config(text='00:00:00')
-    
+        
     def update_time2(self):
           
         if (self.running2 == True):
             
             self.timer2[2] += 1
             
-            if(self.timer2[2] >=100):
+            if(self.timer2[2] >=10):
                 self.timer2[2] = 0
                 self.timer2[1] += 1
             
@@ -384,6 +385,9 @@ class GUI(Frame):
         self.Battery2Label.config(text=self.Bat2String)
         
         root.after(1000, self.Battery_2)
+        
+    def MessageBox(title, text):
+        return tk.messagebox.showwarning(title, text)
 
         
 class Motor_Thread():
