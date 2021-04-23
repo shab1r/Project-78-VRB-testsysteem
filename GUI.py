@@ -1,5 +1,5 @@
-from Motor_Thread import *
-
+from lib import *
+import pandas as pd
 # kit = MotorKit()
 mp = []
 # adc = ADC()
@@ -20,6 +20,7 @@ class GUI(Frame):
         self.running2 = False
         self.running3 = False
         self.running4 = False
+        self.startingTime = datetime.datetime.now()
         self.timer = [0,0,0]
         self.timer2 = [0,0,0]
         self.timeString = str(self.timer[0]) + ':'+ str(self.timer[1]) + ':' + str(self.timer[2])
@@ -212,28 +213,44 @@ class GUI(Frame):
         self.enterEntry3.insert(0, "")
     
     def update_time(self):
-          
+        
         if (self.running == True):
             
-            self.timer[2] += 1
+            x = datetime.datetime.now() - self.startingTime
             
-            if(self.timer[2] >=10):
-                self.timer[2] = 0
-                self.timer[1] += 1
+            seconds = x.seconds
+            mils = str(x.microseconds)[:2]
+            self.timer[1] = seconds
             
-            if(self.timer[1] >= 60):
+            self.timer[2] = mils
+            if((seconds / 60) >= 1):
+                self.startingTime = datetime.datetime.now()
                 self.timer[0] += 1
-                self.timer[1] = 0
+                
+            secondsString = ''
+            minutesString = ''
             
-            self.timeString = str(self.timer[0]) + ':' + str(self.timer[1]) + ':'+ str(self.timer[2])
+            if(seconds <= 9):
+                secondsString = '0' +  str(self.timer[1])
+            else:
+                secondsString = str(self.timer[1])
+            
+            if(self.timer[0] <= 9):
+                minutesString = '0' + str(self.timer[0])
+            else:
+                minutesString = str(self.timer[0])
+           
+            self.timeString = minutesString + ':' + secondsString + ':' + self.timer[2]
             self.show.config(text=self.timeString)
-        root.after(10, self.update_time)
-    
+        root.after(1, self.update_time)
+        
     def start(self):
         if  1.0 >= Power1.get() > 0.0 :
             self.running = True
+            self.startingTime = datetime.datetime.now()
+
         else:
-            messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0")
+            messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0 (Motor 1)")
     
     def pause(self):
         self.running = False
@@ -249,7 +266,7 @@ class GUI(Frame):
             
             self.timer2[2] += 1
             
-            if(self.timer2[2] >=10):
+            if(self.timer2[2] >=100):
                 self.timer2[2] = 0
                 self.timer2[1] += 1
             
@@ -265,9 +282,7 @@ class GUI(Frame):
         if  1.0 >= Power2.get() > 0.0 :
             self.running2 = True
         else:
-            messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0")
-    
-
+            messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0 (Motor 2)")
     
     def pause2(self):
         self.running2 = False
@@ -395,45 +410,45 @@ class GUI(Frame):
         
         root.after(1000, self.Battery_2)
 
-# class Motor_Thread():
-#     def __init2__(self, Power1, Time1, Power2, Time2):
-#         self.Run_Motor1()
-#         self.Power1 = Power1
-#         self.Power2 = Power2
-#         self.Time1 = Time1
-#         self.Time2 = Time2
-#         
-#      
-#     def Run_Motor1(self):
-#         # kit.motor1.throttle = Power1.get()
-#         GUI.start(self)
-# 
-#     def Run_Motor2(self):
-#         # kit.motor2.throttle = Power2.get()
-#         GUI.start2(self)
-#     
-#     def Run_BothMotors(self):
-#         # kit.motor1.throttle = Power1.get()
-#         # kit.motor2.throttle = Power2.get()
-#         GUI.start(self)
-#         GUI.start2(self)
-#         GUI.start3(self)
-#     
-#     def turnOffMotor1(self):
-#         # kit.motor1.throttle = 0.0
-#         GUI.pause(self)
-#         GUI.pause3(self)
-#     
-#     def turnOffMotor2(self):
-#         # kit.motor2.throttle = 0.0
-#         GUI.pause2(self)
-#         
-#     def turnBothMotorsOff(self):
-#         # kit.motor1.throttle = 0.0
-#         # kit.motor2.throttle = 0.0
-#         GUI.pause(self)
-#         GUI.pause3(self)
-#         GUI.pause2(self)
+class Motor_Thread():
+    def __init2__(self, Power1, Time1, Power2, Time2):
+        self.Run_Motor1()
+        self.Power1 = Power1
+        self.Power2 = Power2
+        self.Time1 = Time1
+        self.Time2 = Time2
+        
+     
+    def Run_Motor1(self):
+        # kit.motor1.throttle = Power1.get()
+        GUI.start(self)
+
+    def Run_Motor2(self):
+        # kit.motor2.throttle = Power2.get()
+        GUI.start2(self)
+    
+    def Run_BothMotors(self):
+        # kit.motor1.throttle = Power1.get()
+        # kit.motor2.throttle = Power2.get()
+        GUI.start(self)
+        GUI.start2(self)
+        GUI.start3(self)
+    
+    def turnOffMotor1(self):
+        # kit.motor1.throttle = 0.0
+        GUI.pause(self)
+        GUI.pause3(self)
+    
+    def turnOffMotor2(self):
+        # kit.motor2.throttle = 0.0
+        GUI.pause2(self)
+        
+    def turnBothMotorsOff(self):
+        # kit.motor1.throttle = 0.0
+        # kit.motor2.throttle = 0.0
+        GUI.pause(self)
+        GUI.pause3(self)
+        GUI.pause2(self)
         
 class Charge():
     def __init3__(self, Ch):
