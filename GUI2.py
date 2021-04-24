@@ -1,4 +1,6 @@
 from lib import *
+from client import Client
+Client = Client()
 # kit = MotorKit()
 mp = []
 # adc = ADC()
@@ -10,7 +12,8 @@ max_y = 40
 min2_y = -4
 max2_y = 4
 
-class GUI(Frame):    
+
+class GUI2(Frame):    
     def __init__(self,master=None):
         Frame.__init__(self,master)
         self.grid()
@@ -19,12 +22,12 @@ class GUI(Frame):
         self.running2 = False
         self.running3 = False
         self.running4 = False
+        self.addedUp = False
         self.pauseOdd = 0
-        self.totalPausedTimes = []
-        self.sumPausedTimes= None
-        self.startingTime = datetime.datetime.now()
-        self.timePause = datetime.datetime.now()
-        self.resumeTime = datetime.datetime.now()
+        self.sumPausedTimes= 0.0
+        self.startingTime = 0.0
+        self.timePause = 0.0
+        self.resumeTime = 0.0
         self.paused = False
         self.timer = [0,0,0]
         self.timer2 = [0,0,0]
@@ -223,43 +226,42 @@ class GUI(Frame):
             
             self.pausedTime = self.resumeTime - self.timePause
             
-            self.totalPausedTimes.append(self.pausedTime)
+            if(self.addedUp == False):
+                self.sumPausedTimes += round(self.pausedTime, 2)
+                self.addedUp = True
             
             if self.pauseOdd % 2 == 0:
                 if self.pauseOdd == 0:
-                    stopwatch = datetime.datetime.now() - self.startingTime
+                    stopwatch = time.time() - self.startingTime
                 else:
-                    for i in range(0,len(self.totalPausedTimes)):
-                        self.sumPausedTimes = self.sumPausedTimes.microseconds + ((self.totalPausedTimes[i]).microseconds)
-                        print(sumPausedTimes)
-                    #stopwatch = datetime.datetime.now() - self.startingTime - self.sumPausedTimes
-                    tempWatch = datetime.datetime.now() - self.startingTime                     
-                    stopWatch = tempWatch - self.sumPausedTimes
-
-            print(datetime.datetime.now() - datetime.datetime.now())          
-            seconds = stopwatch.seconds
-            mils = str(stopwatch.microseconds)[:2]
+                    stopwatch = time.time() - self.startingTime - self.sumPausedTimes                
+            seconds = stopwatch
+            seconds = round(seconds, 2)
             self.timer[1] = seconds
+            milsString = str(seconds).split('.')[1]
             
-            self.timer[2] = mils
+            
             if((seconds / 60) >= 1):
-                self.startingTime = datetime.datetime.now()
+                self.startingTime = time.time()
                 self.timer[0] += 1
-                
-            secondsString = ''
-            minutesString = ''
+                self.sumPausedTimes = 0
             
-            if(seconds <= 9):
-                secondsString = '0' +  str(self.timer[1])
+            if(len(milsString) == 1):
+                milsString = milsString + '0'
+            
+            if(seconds <= 10):
+                secondsString = '0' +  str(seconds).split('.')[0]
             else:
-                secondsString = str(self.timer[1])
+                secondsString = str(seconds).split('.')[0]
+            
+            seconds = str(seconds).split('.')[0]
             
             if(self.timer[0] <= 9):
                 minutesString = '0' + str(self.timer[0])
             else:
                 minutesString = str(self.timer[0])
            
-            self.timeString = minutesString + ':' + secondsString + ':' + self.timer[2]
+            self.timeString = minutesString + ':' + secondsString + ':' + milsString
             self.show.config(text=self.timeString)
         root.after(1, self.update_time)
         
@@ -267,14 +269,12 @@ class GUI(Frame):
         if  1.0 >= Power1.get() > 0.0 :
             self.running = True
             if self.pauseOdd % 2 == 0:
-                self.startingTime = datetime.datetime.now()
+                self.startingTime = time.time()
             if self.pauseOdd % 2 != 0:
-                self.resumeTime = datetime.datetime.now()
+                self.resumeTime = time.time()
                 self.pauseOdd += 1
-                
                 self.paused = False
-                
-
+            Client.sendRequest("[1,1,1,"+str(Power1.get())+"]")
         else:
             messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0 (Motor 1)")
     
@@ -282,8 +282,9 @@ class GUI(Frame):
         self.running = False
         if self.paused == False:
             self.pauseOdd += 1
-            self.timePause = datetime.datetime.now()
+            self.timePause = time.time()
             self.paused = True
+            self.addedUp = False
         
     
     def resetTime(self):
@@ -292,7 +293,7 @@ class GUI(Frame):
         self.show.config(text='00:00:00')
         self.pauseOdd = 0
         self.paused = False
-        self.sumPausedTimes = None
+        self.sumPausedTimes = 0.0
         
     def update_time2(self):
           
@@ -455,34 +456,34 @@ class Motor_Thread():
      
     def Run_Motor1(self):
         # kit.motor1.throttle = Power1.get()
-        GUI.start(self)
+        GUI2.start(self)
 
     def Run_Motor2(self):
         # kit.motor2.throttle = Power2.get()
-        GUI.start2(self)
+        GUI2.start2(self)
     
     def Run_BothMotors(self):
         # kit.motor1.throttle = Power1.get()
         # kit.motor2.throttle = Power2.get()
-        GUI.start(self)
-        GUI.start2(self)
-        GUI.start3(self)
+        GUI2.start(self)
+        GUI2.start2(self)
+        GUI2.start3(self)
     
     def turnOffMotor1(self):
         # kit.motor1.throttle = 0.0
-        GUI.pause(self)
-        GUI.pause3(self)
+        GUI2.pause(self)
+        GUI2.pause3(self)
     
     def turnOffMotor2(self):
         # kit.motor2.throttle = 0.0
-        GUI.pause2(self)
+        GUI2.pause2(self)
         
     def turnBothMotorsOff(self):
         # kit.motor1.throttle = 0.0
         # kit.motor2.throttle = 0.0
-        GUI.pause(self)
-        GUI.pause3(self)
-        GUI.pause2(self)
+        GUI2.pause(self)
+        GUI2.pause3(self)
+        GUI2.pause2(self)
         
 class Charge():
     def __init3__(self, Ch):
@@ -599,7 +600,7 @@ class DynamicUpdate_Bat1():
         return xdata, ydata
 
 root = tk.Tk()
-up = GUI(root)
+up = GUI2(root)
 root.title('Chromatography software')
 
 
