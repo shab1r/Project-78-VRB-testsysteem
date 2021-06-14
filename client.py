@@ -2,8 +2,6 @@ import socket
 import time
 import threading
 
-HEADER = 140
-FORMAT = 'utf-8'
 
 class Client():
     def __init__(self):
@@ -19,8 +17,10 @@ class Client():
         self.clientSocket.send(bytes(name, "utf8"))
         time.sleep(0.1)
         strMessage = str(message)
+        # print(strMessage)
         self.clientSocket.send(bytes(strMessage, "utf8"))
         time.sleep(0.1)
+
         if message == "{quit}":
             self.clientSocket.close()
 
@@ -71,6 +71,8 @@ class Client():
                 break
 
 client = Client()
-thread = threading.Thread(target=client.receive)
-thread.start()
-client.sendRequest("client")
+
+def start():
+    thread = threading.Thread(target=client.receive)
+    thread.start()
+    client.sendRequest("client")
