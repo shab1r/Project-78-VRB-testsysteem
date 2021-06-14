@@ -271,11 +271,11 @@ class GUI2(Frame):
         root.after(1, self.update_time)
         
     def start(self):
-        if  1.0 >= Power1.get() > 0.0:
-            if self.running == False:
+        if  (1.0 >= Power1.get() > 0.0):
+            if (self.running == False):
                 self.running = True
                 self.resetted = False
-                if self.pauseOdd % 2 == 0:
+                if (self.pauseOdd % 2 == 0):
                     self.startingTime = time.time()
                 else:
                     self.resumeTime = time.time()
@@ -395,13 +395,13 @@ class GUI2(Frame):
     
         global Signal
         
-        # Signal = adc.read_adc_voltage(8,0)
+        Signal = adc.read_adc_voltage(8,0)
     
     def SignalSet(self):
         
         global ChromS
         
-        # ChromS = (adc.read_adc_voltage(8,0) - Signal)
+        ChromS = (adc.read_adc_voltage(8,0) - Signal)
         
         root.after(100, self.SignalSet)
     
@@ -428,7 +428,7 @@ class GUI2(Frame):
         
         global T
         
-        # T = (adc.read_adc_voltage(1,0)-1.25)/0.005
+        T = (adc.read_adc_voltage(1,0)-1.25)/0.005
         
         self.tempString = str(round(T, 2))
         self.TemperatureLabel.config(text=self.tempString)
@@ -439,7 +439,7 @@ class GUI2(Frame):
         
         global Bat1
         
-        # Bat1 = adc.read_adc_voltage(8,0)
+        Bat1 = adc.read_adc_voltage(8,0)
         
         self.Bat1String = Bat1
         self.Battery1Label.config(text=self.Bat1String)
@@ -448,7 +448,7 @@ class GUI2(Frame):
         
     def Battery_2(self):
           
-        # Bat2 = adc.read_adc_voltage(3,0)
+        Bat2 = adc.read_adc_voltage(3,0)
         
         self.Bat2String = str(round(Bat2, 2))
         self.Battery2Label.config(text=self.Bat2String)
@@ -465,32 +465,32 @@ class Motor_Thread():
         
      
     def Run_Motor1(self):
-        # kit.motor1.throttle = Power1.get()
+        kit.motor1.throttle = Power1.get()
         GUI2.start(self)
 
     def Run_Motor2(self):
-        # kit.motor2.throttle = Power2.get()
+        kit.motor2.throttle = Power2.get()
         GUI2.start2(self)
     
     def Run_BothMotors(self):
-        # kit.motor1.throttle = Power1.get()
-        # kit.motor2.throttle = Power2.get()
+        kit.motor1.throttle = Power1.get()
+        kit.motor2.throttle = Power2.get()
         GUI2.start(self)
         GUI2.start2(self)
         GUI2.start3(self)
     
     def turnOffMotor1(self):
-        # kit.motor1.throttle = 0.0
+        kit.motor1.throttle = 0.0
         GUI2.pause(self)
         GUI2.pause3(self)
     
     def turnOffMotor2(self):
-        # kit.motor2.throttle = 0.0
+        kit.motor2.throttle = 0.0
         GUI2.pause2(self)
         
     def turnBothMotorsOff(self):
-        # kit.motor1.throttle = 0.0
-        # kit.motor2.throttle = 0.0
+        kit.motor1.throttle = 0.0
+        kit.motor2.throttle = 0.0
         GUI2.pause(self)
         GUI2.pause3(self)
         GUI2.pause2(self)
@@ -508,7 +508,7 @@ class Charge():
         if (running6 == True):
             while True:
                 period+=1
-                # dac.set_dac_voltage(2, Ch.get())
+                dac.set_dac_voltage(2, Ch.get())
                 print ("This While True works")
                 if period>100:
                     period=0
@@ -520,7 +520,7 @@ class Charge():
         if (self.running6 == True):
             while True:
                 period+=1
-                # dac.set_dac_voltage(2, 0.0)
+                dac.set_dac_voltage(2, 0.0)
                 print ("This While True works")
                 if period>100:
                     period=0
@@ -562,7 +562,7 @@ class DynamicUpdate():
         ydata = []
         for x in np.arange(0,3600,0.5):
             xdata.append(time.time())
-            # ydata.append((adc.read_adc_voltage(1,0)-1.25)/0.005)
+            ydata.append((adc.read_adc_voltage(1,0)-1.25)/0.005)
             DynamicUpdate.on_running(self, xdata, ydata)
             plt.pause(5)
         return xdata, ydata
