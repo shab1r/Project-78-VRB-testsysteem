@@ -19,12 +19,8 @@ class Client():
         self.clientSocket.send(bytes(name, "utf8"))
         time.sleep(0.1)
         strMessage = str(message)
-        # print(strMessage)
         self.clientSocket.send(bytes(strMessage, "utf8"))
         time.sleep(0.1)
-        # self.clientSocket.send(bytes(str("{quit}"), "utf8"))
-        # time.sleep(0.1)
-        # self.clientSocket.close()
         if message == "{quit}":
             self.clientSocket.close()
 
@@ -62,10 +58,11 @@ class Client():
 
                 elif '2' in l[0]:
                         print("timer moet aangestuurd worden")
+
                 elif '3' in l[0]:
                         print("geen idee wat aangestuurd moet worden")
+
                 elif '4' in l[0]:
-                        "weer geen idee"
                         client.sendRequest("{quit}")
                 else: 
                     print("no value")
