@@ -1,4 +1,5 @@
 from lib import *
+from client import start as clientStart
 Client = Client()
 # kit = MotorKit()
 mp = []
@@ -23,6 +24,7 @@ class GUI2(Frame):
         self.running3 = False
         self.running4 = False
         self.addedUp = False
+        self.resetted = True
         self.pauseOdd = 0
         self.sumPausedTimes= 0.0
         self.startingTime = 0.0
@@ -51,9 +53,10 @@ class GUI2(Frame):
         ST = self.StartTime()
 
     def receive(self):
-        start()  
+        clientStart()
          
     def widgets(self):
+        
         global Power1
         Power1 = None
         Power1 = tk.DoubleVar()
@@ -145,7 +148,7 @@ class GUI2(Frame):
         self.show2 = tk.Label(self.powerFrame2, width=7, text='00:00:00', background="black", foreground="yellow", font=('Helvetica',20))
         self.show2.grid(row=6, column=0, padx=5, pady=5)
         
-        #self.Startstopwatch2 = tk.Button(self.powerFrame2, text="Start", command=self.start2).grid(column=1,row=6, padx=5, pady=5)
+#         self.Startstopwatch2 = tk.Button(self.powerFrame2, text="Start", command=self.start2).grid(column=1,row=6, padx=5, pady=5)
         self.Startstopwatch2 = tk.Button(self.powerFrame2, text="Reset", command=self.resetTime2).grid(column=2,row=7, padx=5, pady=5)
         
         ##### start/stop both motors #####
@@ -213,7 +216,7 @@ class GUI2(Frame):
         self.Start_Measurement = tk.Button(self.chargeFrame, bg="green2", width=15, text="Start Chromatogram", command=lambda:[RemoteProg2.Remote()]).grid(column=5, row=6, columnspan=2, padx=5, pady=5)
 
 
-         ### Performance time entry ###
+### Performance time entry ###
         
         self.enterEntry3 = tk.Entry(self.chargeFrame, width=7, textvariable= "")
         self.enterEntry3.grid(row=7, column=5, columnspan=2, padx=5, pady=5)
@@ -225,7 +228,6 @@ class GUI2(Frame):
     def update_time(self):
         
         if (self.running == True):
-            
             self.pausedTime = self.resumeTime - self.timePause
             
             if(self.addedUp == False):
@@ -241,6 +243,7 @@ class GUI2(Frame):
             seconds = round(seconds, 2)
             self.timer[1] = seconds
             milsString = str(seconds).split('.')[1]
+            self.timer[2] = seconds * 100
             
             
             if((seconds / 60) >= 1):
@@ -268,35 +271,39 @@ class GUI2(Frame):
         root.after(1, self.update_time)
         
     def start(self):
-        if  1.0 >= Power1.get() > 0.0 :
-            self.running = True
-            if self.pauseOdd % 2 == 0:
-                self.startingTime = time.time()
-            if self.pauseOdd % 2 != 0:
-                self.resumeTime = time.time()
-                self.pauseOdd += 1
-                self.paused = False
-            Client.sendRequest("[1,1,1,"+str(Power1.get())+"]")
+        if  1.0 >= Power1.get() > 0.0:
+            if self.running == False:
+                self.running = True
+                self.resetted = False
+                if self.pauseOdd % 2 == 0:
+                    self.startingTime = time.time()
+                else:
+                    self.resumeTime = time.time()
+                    self.pauseOdd += 1
+                    self.paused = False
+                Client.sendRequest("[1,1,1,"+str(Power1.get())+"]")
         else:
             messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0 (Motor 1)")
     
     def pause(self):
-        self.running = False
-        if self.paused == False:
-            self.pauseOdd += 1
-            self.timePause = time.time()
-            self.paused = True
-            self.addedUp = False
-        Client.sendRequest("[1,1,2,"+str(Power1.get())+"]")
-        
+        if self.resetted == False:
+            self.running = False
+            if self.paused == False:
+                self.pauseOdd += 1
+                self.timePause = time.time()
+                self.paused = True
+                self.addedUp = False
     
     def resetTime(self):
+        self.resetted = True
         self.running = False
         self.timer = [0,0,0]
         self.show.config(text='00:00:00')
         self.pauseOdd = 0
         self.paused = False
         self.sumPausedTimes = 0.0
+        self.startingTime = time.time()
+        
         
     def update_time2(self):
           
@@ -319,13 +326,11 @@ class GUI2(Frame):
     def start2(self):
         if  1.0 >= Power2.get() > 0.0 :
             self.running2 = True
-            Client.sendRequest("[1,2,1,"+str(Power1.get())+"]")
         else:
             messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0 (Motor 2)")
     
     def pause2(self):
         self.running2 = False
-        Client.sendRequest("[1,2,2,"+str(Power1.get())+"]")
     
     def resetTime2(self):
         self.running2 = False
