@@ -1,24 +1,30 @@
 from lib import *
 from client import start as clientStart
+import requests
+import atexit
+ 
 Client = Client()
-# kit = MotorKit()
+kit = MotorKit()
 mp = []
-# adc = ADC()
-# dac = DAC(2)
-# plt.ion()
+adc = ADC()
+dac = DAC(2)
+plt.ion()
 min_y = 0
 max_y = 40
 
 min2_y = -4
 max2_y = 4
 
+def sendOnlineRequest():
+    json = {'message':[1,1]}
+    requests.post('http://95.217.181.53:2000/update_status', json=json)
 
 class GUI2(Frame):    
     def __init__(self,master=None):
         Frame.__init__(self,master)
         self.grid()
         self.widgets()
-        self.receive()
+        #self.receive()
         self.running = False
         self.running2 = False
         self.running3 = False
@@ -51,9 +57,45 @@ class GUI2(Frame):
         self.SignalSet()
         running6 = False
         ST = self.StartTime()
-
+        
+        
+    def Anker(self):
+        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        
     def receive(self):
-        clientStart()
+        
+        clientStart(self.messagesBuffer)
+        print(self.messagesBuffer)
+        if len(self.messagesBuffer):
+        #Client.receive(messagesBuffer = self.messagesBuffer)
+            l=self.messagesBuffer[0]
+            if('1' in l[0]):
+                print( "motor moet aangestuurd worden")
+                if('1' in l[1]):
+                    print( "motor 1 moet aangestuurd worden")
+                    if('1' in l[2]):
+                        print("motor 1 moet aangezet worden op: ",l[3])
+                    else :
+                        print("motor 1 moet uitgezet worden")
+                elif('2' in l[1]):
+                    print("motor 2 moet aangezet worden")
+                    if('1' in l[2]):
+                         print("motor 2 moet aangezet worden op: ",l[3])
+                    else :
+                         print("motor 2 moet uitgezet worden")
+                elif('3' in l[1]):
+                        print("beide motors moeten aan")
+            elif('2' in l[0]):
+                print("timer moet aangestuurd worden")
+            elif('3' in l[0]):
+                print("geen idee wat aangestuurd moet worden")
+            elif('4' in l[0]):
+                Client.sendRequest("{quit}")
+            else: 
+                print("bericht: ", l)
+                l = []
+                self.messagesBuffer = []
+                
          
     def widgets(self):
         
@@ -107,6 +149,8 @@ class GUI2(Frame):
         
         self.StartMotor1Button = tk.Button(self.powerFrame1, text="Start motor 1", command=lambda:[Motor_Thread.Run_Motor1(self), self.returnEntry(arg=None)]).grid(column=2,row=2, padx=5, pady=5)
         self.StopMotor1Button = tk.Button(self.powerFrame1, text="Stop Motor1", command=lambda:Motor_Thread.turnOffMotor1(self)).grid(row=3,column=2, padx=5, pady=5)
+        
+        print("buttons are done")
         
         self.enterEntry1.insert(0, "")
         self.Powerentry.insert(0, "")
@@ -464,13 +508,21 @@ class Motor_Thread():
         self.Time2 = Time2
         
      
-    def Run_Motor1(self):
-        kit.motor1.throttle = Power1.get()
+    def Run_Motor1(self, manualPower=0):
+        if manualPower > 0:
+            Power1.set(manualPower)
+            kit.motor1.throttle = Power1.get()
+        else:
+            kit.motor1.throttle = Power1.get()
         GUI2.start(self)
 
-    def Run_Motor2(self):
-        kit.motor2.throttle = Power2.get()
-        GUI2.start2(self)
+    def Run_Motor2(self, manualPower=0):
+        if manualPower > 0:
+            Power2.set(manualPower)
+            kit.motor2.throttle = Power2.get()
+        else:
+            kit.motor2.throttle = Power2.get()
+        GUI2.start(self)
     
     def Run_BothMotors(self):
         kit.motor1.throttle = Power1.get()
@@ -611,7 +663,17 @@ class DynamicUpdate_Bat1():
 
 root = tk.Tk()
 up = GUI2(root)
+clientStart(up, Motor_Thread)
 root.title('Chromatography software')
-
+sendOnlineRequest()
 
 root.mainloop()
+
+
+
+
+
+
+
+
+
