@@ -49,7 +49,7 @@ class GUI2(Frame):
         self.Temperature()
         self.tempString = str(T)
         self.Battery_1()
-        self.Battery_1()
+        self.Battery_2()
         self.StartTime()
         self.returnEntry()
         self.TimeSet()
@@ -485,7 +485,7 @@ class GUI2(Frame):
         
         Bat1 = adc.read_adc_voltage(8,0)
         
-        self.Bat1String = Bat1
+        self.Bat1String = str(round(Bat1, 2))
         self.Battery1Label.config(text=self.Bat1String)
                 
         root.after(1000, self.Battery_1)
@@ -668,7 +668,6 @@ root.title('Chromatography software')
 sendOnlineRequest()
 
 root.mainloop()
-
 
 
 
