@@ -559,35 +559,31 @@ class Motor_Thread():
     def Run_Motor1(self, manualPower=0):
 
         # kijkt of manualPower(de fractional power vanuit de webinterface) tussen de 1 en 0 ligt
-        if 1.0 >= manualPower > 0:
+        if 1.0 >= float(manualPower) > 0:
             Power1.set(manualPower)
             kit.motor1.throttle = Power1.get()
             GUI2.start(self)
 
         # wanneer de motor vanuit de raspberry wordt aangesuurt gaat hij deze else statement in
-        else:
-
-            #kijkt of de fractional power tussen de 1 en 0 ligt
-            if 1.0 >= Power1.get() > 0:
-                kit.motor1.throttle = Power1.get()
-                GUI2.start(self)
+        elif 1.0 >= float(Power1.get()) > 0:
+            kit.motor1.throttle = Power1.get()
+            GUI2.start(self)
 
             #showt error message wanneer de fractional power niet tussen de 1 en o ligt
-            else:
-                messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1)")
+        else:
+            messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1)")
 
     def Run_Motor2(self, manualPower=0):
         if 1.0 >= manualPower > 0:
             Power2.set(manualPower)
             kit.motor2.throttle = Power2.get()
             GUI2.start(self)
-        else:
-            if 1.0 >= Power2.get() > 0:
+        elif 1.0 >= Power2.get() > 0:
 
-                kit.motor2.throttle = Power2.get()
-                GUI2.start(self)
-            else:
-                messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1)")
+            kit.motor2.throttle = Power2.get()
+            GUI2.start(self)
+        else:
+            messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1)")
 
     
     def Run_BothMotors(self, manualPower1=0, manualPower2 =0):
@@ -601,17 +597,16 @@ class Motor_Thread():
                 GUI2.start2(self)
                 GUI2.start3(self)
 
-        else:
-            if 1.0 >= Power1.get() > 0.0:
-                if 1.0 >= Power2.get() > 0.0:
-                    kit.motor1.throttle = Power1.get()
-                    kit.motor2.throttle = Power2.get()
-                    GUI2.start(self)
-                    GUI2.start2(self)
-                    GUI2.start3(self)
-                else:
-                    messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 2)")
-            else: messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1  en of 2)")
+        elif 1.0 >= Power1.get() > 0.0:
+            if 1.0 >= Power2.get() > 0.0:
+                kit.motor1.throttle = Power1.get()
+                kit.motor2.throttle = Power2.get()
+                GUI2.start(self)
+                GUI2.start2(self)
+                GUI2.start3(self)
+            else:
+                messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 2)")
+        else: messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1  en of 2)")
 
 
     def turnOffMotor1(self):
@@ -751,6 +746,7 @@ root.title('Chromatography software')
 sendOnlineRequest()
 
 root.mainloop()
+
 
 
 
