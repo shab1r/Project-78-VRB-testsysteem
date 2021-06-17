@@ -31,12 +31,19 @@ class GUI2(Frame):
         self.running4 = False
         self.addedUp = False
         self.resetted = True
+        self.resetted2 = True
+        self.pauseOdd = 0
         self.pauseOdd = 0
         self.sumPausedTimes= 0.0
+        self.sumPausedTimes2= 0.0
         self.startingTime = 0.0
         self.timePause = 0.0
         self.resumeTime = 0.0
         self.paused = False
+        self.startingTime2 = 0.0
+        self.timePause2 = 0.0
+        self.resumeTime2 = 0.0
+        self.paused2 = False
         self.timer = [0,0,0]
         self.timer2 = [0,0,0]
         self.timeString = str(self.timer[0]) + ':'+ str(self.timer[1]) + ':' + str(self.timer[2])
@@ -325,9 +332,6 @@ class GUI2(Frame):
                     self.resumeTime = time.time()
                     self.pauseOdd += 1
                     self.paused = False
-                Client.sendRequest("[1,1,1,"+str(Power1.get())+"]")
-        else:
-            messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0 (Motor 1)")
     
     def pause(self):
         if self.resetted == False:
@@ -350,36 +354,80 @@ class GUI2(Frame):
         
         
     def update_time2(self):
-          
         if (self.running2 == True):
+            self.pausedTime2 = self.resumeTime2 - self.timePause2
             
-            self.timer2[2] += 1
+            if(self.addedUp2 == False):
+                self.sumPausedTimes2 += round(self.pausedTime2, 2)
+                self.addedUp2 = True
             
-            if(self.timer2[2] >=100):
-                self.timer2[2] = 0
-                self.timer2[1] += 1
+            if self.pauseOdd2 % 2 == 0:
+                if self.pauseOdd2 == 0:
+                    stopwatch2 = time.time() - self.startingTime2
+                else:
+                    stopwatch2 = time.time() - self.startingTime2 - self.sumPausedTimes2                
+            seconds2 = stopwatch2
+            seconds2 = round(seconds2, 2)
+            self.timer2[1] = seconds2
+            milsString2 = str(seconds2).split('.')[1]
+            self.timer2[2] = seconds2 * 100
             
-            if(self.timer2[1] >= 60):
+            
+            if((seconds2 / 60) >= 1):
+                self.startingTime2 = time.time()
                 self.timer2[0] += 1
-                self.timer2[1] = 0
+                self.sumPausedTimes2 = 0
             
-            self.timeString2 = str(self.timer2[0]) + ':' + str(self.timer2[1]) + ':'+ str(self.timer2[2])
+            if(len(milsString2) == 1):
+                milsString2 = milsString2 + '0'
+            
+            if(seconds2 <= 10):
+                secondsString2 = '0' +  str(seconds2).split('.')[0]
+            else:
+                secondsString2 = str(seconds2).split('.')[0]
+            
+            seconds2 = str(seconds2).split('.')[0]
+            
+            if(self.timer2[0] <= 9):
+                minutesString2 = '0' + str(self.timer2[0])
+            else:
+                minutesString2 = str(self.timer2[0])
+           
+            self.timeString2 = minutesString2 + ':' + secondsString2 + ':' + milsString2
             self.show2.config(text=self.timeString2)
-        root.after(10, self.update_time2)
+        root.after(1, self.update_time2)
         
     def start2(self):
-        if  1.0 >= Power2.get() > 0.0 :
+
+        if self.running2 == False:
             self.running2 = True
-        else:
-            messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0 (Motor 2)")
+            self.resetted2 = False
+            if self.pauseOdd2 % 2 == 0:
+                self.startingTime2 = time.time()
+            else:
+                self.resumeTime2 = time.time()
+                self.pauseOdd2 += 1
+                self.paused2 = False
+
     
     def pause2(self):
-        self.running2 = False
+        if self.resetted2 == False:
+            self.running2 = False
+            if self.paused2 == False:
+                self.pauseOdd2 += 1
+                self.timePause2 = time.time()
+                self.paused2 = True
+                self.addedUp2 = False
     
     def resetTime2(self):
+        self.resetted2 = True
         self.running2 = False
         self.timer2 = [0,0,0]
         self.show2.config(text='00:00:00')
+        self.pauseOdd2 = 0
+        self.paused2 = False
+        self.sumPausedTimes2 = 0.0
+        self.startingTime2 = time.time()
     
     def callback(self):
         filename = tk.filedialog.askdirectory()
@@ -509,28 +557,63 @@ class Motor_Thread():
         
      
     def Run_Motor1(self, manualPower=0):
-        if manualPower > 0:
+
+        # kijkt of manualPower(de fractional power vanuit de webinterface) tussen de 1 en 0 ligt
+        if 1.0 >= manualPower > 0:
             Power1.set(manualPower)
             kit.motor1.throttle = Power1.get()
+            GUI2.start(self)
+
+        # wanneer de motor vanuit de raspberry wordt aangesuurt gaat hij deze else statement in
         else:
-            kit.motor1.throttle = Power1.get()
-        GUI2.start(self)
+
+            #kijkt of de fractional power tussen de 1 en 0 ligt
+            if 1.0 >= Power1.get() > 0:
+                kit.motor1.throttle = Power1.get()
+                GUI2.start(self)
+
+            #showt error message wanneer de fractional power niet tussen de 1 en o ligt
+            else:
+                messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1)")
 
     def Run_Motor2(self, manualPower=0):
-        if manualPower > 0:
+        if 1.0 >= manualPower > 0:
             Power2.set(manualPower)
             kit.motor2.throttle = Power2.get()
+            GUI2.start(self)
         else:
-            kit.motor2.throttle = Power2.get()
-        GUI2.start(self)
+            if 1.0 >= Power2.get() > 0:
+
+                kit.motor2.throttle = Power2.get()
+                GUI2.start(self)
+            else:
+                messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1)")
+
     
-    def Run_BothMotors(self):
-        kit.motor1.throttle = Power1.get()
-        kit.motor2.throttle = Power2.get()
-        GUI2.start(self)
-        GUI2.start2(self)
-        GUI2.start3(self)
-    
+    def Run_BothMotors(self, manualPower1=0, manualPower2 =0):
+        if 1.0 >= manualPower1 > 0.0:
+            if 1.0 >= manualPower2 > 0.0:
+                Power1.set(manualPower1)
+                Power2.set(manualPower2)
+                kit.motor1.throttle = Power1.get()
+                kit.motor2.throttle = Power2.get()
+                GUI2.start(self)
+                GUI2.start2(self)
+                GUI2.start3(self)
+
+        else:
+            if 1.0 >= Power1.get() > 0.0:
+                if 1.0 >= Power2.get() > 0.0:
+                    kit.motor1.throttle = Power1.get()
+                    kit.motor2.throttle = Power2.get()
+                    GUI2.start(self)
+                    GUI2.start2(self)
+                    GUI2.start3(self)
+                else:
+                    messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 2)")
+            else: messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1  en of 2)")
+
+
     def turnOffMotor1(self):
         kit.motor1.throttle = 0.0
         GUI2.pause(self)
