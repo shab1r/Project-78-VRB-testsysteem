@@ -468,11 +468,6 @@ class GUI2(Frame):
                 csvfile.flush()
         root.after(1000, self.start_datalogging)
     
-    def start3(self):
-        self.running3 = True
-        
-    def pause3(self):
-        self.running3 = False
     
     def returnEntry(self, arg=None):
         
@@ -590,11 +585,11 @@ class Motor_Thread():
             kit.motor2.throttle = Power2.get()
             self.enterEntry2.delete(0, END)
             self.enterEntry2.insert(0, Power2.get())
-            GUI2.start(self)
+            GUI2.start2(self)
         elif 1.0 >= Power2.get() > 0:
 
             kit.motor2.throttle = Power2.get()
-            GUI2.start(self)
+            GUI2.start2(self)
         else:
             messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1)")
 
@@ -611,21 +606,18 @@ class Motor_Thread():
             self.enterEntry2.insert(0, Power2.get())
             GUI2.start(self)
             GUI2.start2(self)
-            GUI2.start3(self)
 
         elif 1.0 >= Power1.get() > 0.0:
             kit.motor1.throttle = Power1.get()
             kit.motor2.throttle = Power2.get()
             GUI2.start(self)
             GUI2.start2(self)
-            GUI2.start3(self)
         else: messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1  en of 2)")
 
 
     def turnOffMotor1(self):
         kit.motor1.throttle = 0.0
         GUI2.pause(self)
-        GUI2.pause3(self)
     
     def turnOffMotor2(self):
         kit.motor2.throttle = 0.0
@@ -635,7 +627,6 @@ class Motor_Thread():
         kit.motor1.throttle = 0.0
         kit.motor2.throttle = 0.0
         GUI2.pause(self)
-        GUI2.pause3(self)
         GUI2.pause2(self)
         
 class Charge():
@@ -643,7 +634,6 @@ class Charge():
         self.Charge1()
         self.Charge1_stop()
         self.running6 = False
-        self.Start6()
         
     def Charge1(self):
         period=0
