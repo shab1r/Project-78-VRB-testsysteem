@@ -15,15 +15,15 @@ max2_y = 4
 
 Power1 = 0
 Power2 = 0
-Ch = Ch
+Ch = 0
 
-ChromS = ChromS
-T = T
-Start = Start
-TimeS = TimeS
-Bat1 = Bat1
-Bat2 = Bat2
-Signal = Signal
+ChromS = 0
+T = 0
+Start = 0
+TimeS = 0
+Bat1 = 0
+Bat2 = 0
+Signal = 0
 
 def sendOnlineRequest():
     json = {'message':[1,1]}
