@@ -50,7 +50,7 @@ def receive(self, gui, Motor_thread):
                 elif '2' in l[1]:
                     print("motor 2 moet aangezet worden")
                     if  '1' in l[2]:
-                        power2 = l[3].replace('[','')
+                        power2 = l[3].replace(']','')
                         print("motor 2 moet aangezet worden op: ",power2)
 
                         Motor_thread.Run_Motor2(gui, float(power2))
@@ -61,15 +61,21 @@ def receive(self, gui, Motor_thread):
                 elif '3' in l[1]:
                     print("beide motors moeten aan")
                     if '1' in l[2]:
-                        power3 = l[3].replace('[','')
+                        power3 = l[3].replace(']','')
                         print("beide motoren moeten aan op: ",power3)
                         Motor_thread.Run_BothMotors(gui, float(power3))
-                    elif '0' in l[2]:
+
+                    elif '2' in l[2]:
                         print("beide motors moeten uit")
-                        Motor_thread.TurnBothMotorsOff(gui)
+                        Motor_thread.turnBothMotorsOff(gui)
 
             elif '2' in l[0]:
                     print("timer moet aangestuurd worden")
+                    if '1' in l[1]:
+                        print("timer 1 moet aangestuurd worden")
+                        if '3' in l[2]:
+                            print("timer 1 moet gereset worden")
+
             elif '3' in l[0]:
                     print("geen idee wat aangestuurd moet worden")
             elif '4' in l[0]:
