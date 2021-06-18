@@ -27,7 +27,10 @@ class Client():
         return 200
 
 
-    def receive(self):  
+client = Client()
+
+def receive(self, gui, Motor_thread):
+        print("kont")
         while True:
             try:
                 msg = self.clientSocket.recv(1024).decode("utf8")
@@ -37,12 +40,15 @@ class Client():
                     print( "motor moet aangestuurd worden")
                     if '1' in l[1]:
                         print( "motor 1 moet aangestuurd worden")
-
                         if  '1' in l[2]:
-                            print("motor 1 moet aangezet worden op: ",l[3])
+                            power = l[3].replace(']','')
+                            print("motor 1 moet aangezet worden op: ",power)
+                            
+                            Motor_thread.Run_Motor1(gui, float(power))
 
                         else :
                             print("motor 1 moet uitgezet worden")
+                            Motor_thread.turnOffMotor1(gui)
 
                     elif '2' in l[1]:
                         print("motor 2 moet aangezet worden")
@@ -70,9 +76,7 @@ class Client():
             except OSError:  # Possibly client has left the chat.
                 break
 
-client = Client()
-
-def start():
-    thread = threading.Thread(target=client.receive)
+def start(gui, Motor_thread):
+    thread = threading.Thread(target=receive, args=(client,gui,Motor_thread,))
     thread.start()
     client.sendRequest("client")
