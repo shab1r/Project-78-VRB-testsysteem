@@ -43,7 +43,7 @@ def receive(self, gui, Motor_thread):
                         print("motor 1 moet aangezet worden op: ",power)
                         
                         Motor_thread.Run_Motor1(gui, float(power))
-                    elif '0' in l[2] :
+                    elif '2' in l[2] :
                         print("motor 1 moet uitgezet worden")
                         Motor_thread.turnOffMotor1(gui)
 
@@ -54,7 +54,7 @@ def receive(self, gui, Motor_thread):
                         print("motor 2 moet aangezet worden op: ",power2)
 
                         Motor_thread.Run_Motor2(gui, float(power2))
-                    elif '0' in l[2]:
+                    elif '2' in l[2]:
                         print("motor 2 moet uitgezet worden")
                         Motor_thread.turnOffMotor2(gui)
 
