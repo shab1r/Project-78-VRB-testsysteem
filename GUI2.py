@@ -1,8 +1,5 @@
 from lib import *
-from client import start as clientStart
-import requests
-import atexit
- 
+
 Client = Client()
 kit = MotorKit()
 mp = []
@@ -14,6 +11,19 @@ max_y = 40
 
 min2_y = -4
 max2_y = 4
+
+
+Power1 = 0
+Power2 = 0
+Ch = Ch
+
+ChromS = ChromS
+T = T
+Start = Start
+TimeS = TimeS
+Bat1 = Bat1
+Bat2 = Bat2
+Signal = Signal
 
 def sendOnlineRequest():
     json = {'message':[1,1]}
@@ -33,7 +43,7 @@ class GUI2(Frame):
         self.resetted = True
         self.resetted2 = True
         self.pauseOdd = 0
-        self.pauseOdd = 0
+        self.pauseOdd2 = 0
         self.sumPausedTimes= 0.0
         self.sumPausedTimes2= 0.0
         self.startingTime = 0.0
@@ -105,8 +115,8 @@ class GUI2(Frame):
                 
          
     def widgets(self):
-        
-        global Power1
+
+        global Power1 
         Power1 = None
         Power1 = tk.DoubleVar()
         
@@ -118,8 +128,8 @@ class GUI2(Frame):
         global Ch
         Ch = tk.DoubleVar()
         
-        global SignalS
-        SignalS = tk.DoubleVar()
+        # global SignalS
+        # SignalS = tk.DoubleVar()
         
         global ChromS
         ChromS = tk.DoubleVar()
@@ -157,7 +167,6 @@ class GUI2(Frame):
         self.StartMotor1Button = tk.Button(self.powerFrame1, text="Start motor 1", command=lambda:[Motor_Thread.Run_Motor1(self), self.returnEntry(arg=None)]).grid(column=2,row=2, padx=5, pady=5)
         self.StopMotor1Button = tk.Button(self.powerFrame1, text="Stop Motor1", command=lambda:Motor_Thread.turnOffMotor1(self)).grid(row=3,column=2, padx=5, pady=5)
         
-        print("buttons are done")
         
         self.enterEntry1.insert(0, "")
         self.Powerentry.insert(0, "")
@@ -562,6 +571,8 @@ class Motor_Thread():
         if 1.0 >= float(manualPower) > 0:
             Power1.set(manualPower)
             kit.motor1.throttle = Power1.get()
+            self.enterEntry1.delete(0, END)
+            self.enterEntry1.insert(0, Power1.get())
             GUI2.start(self)
 
         # wanneer de motor vanuit de raspberry wordt aangesuurt gaat hij deze else statement in
@@ -577,6 +588,8 @@ class Motor_Thread():
         if 1.0 >= manualPower > 0:
             Power2.set(manualPower)
             kit.motor2.throttle = Power2.get()
+            self.enterEntry2.delete(0, END)
+            self.enterEntry2.insert(0, Power2.get())
             GUI2.start(self)
         elif 1.0 >= Power2.get() > 0:
 
@@ -586,26 +599,26 @@ class Motor_Thread():
             messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1)")
 
     
-    def Run_BothMotors(self, manualPower1=0, manualPower2 =0):
-        if 1.0 >= manualPower1 > 0.0:
-            if 1.0 >= manualPower2 > 0.0:
-                Power1.set(manualPower1)
-                Power2.set(manualPower2)
-                kit.motor1.throttle = Power1.get()
-                kit.motor2.throttle = Power2.get()
-                GUI2.start(self)
-                GUI2.start2(self)
-                GUI2.start3(self)
+    def Run_BothMotors(self, manualPower=0):
+        if 1.0 >= manualPower > 0.0:
+            Power1.set(manualPower)
+            Power2.set(manualPower)
+            kit.motor1.throttle = Power1.get()
+            kit.motor2.throttle = Power2.get()
+            self.enterEntry1.delete(0, END)
+            self.enterEntry1.insert(0, Power1.get())
+            self.enterEntry2.delete(0, END)
+            self.enterEntry2.insert(0, Power2.get())
+            GUI2.start(self)
+            GUI2.start2(self)
+            GUI2.start3(self)
 
         elif 1.0 >= Power1.get() > 0.0:
-            if 1.0 >= Power2.get() > 0.0:
-                kit.motor1.throttle = Power1.get()
-                kit.motor2.throttle = Power2.get()
-                GUI2.start(self)
-                GUI2.start2(self)
-                GUI2.start3(self)
-            else:
-                messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 2)")
+            kit.motor1.throttle = Power1.get()
+            kit.motor2.throttle = Power2.get()
+            GUI2.start(self)
+            GUI2.start2(self)
+            GUI2.start3(self)
         else: messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1  en of 2)")
 
 
@@ -632,7 +645,7 @@ class Charge():
         self.running6 = False
         self.Start6()
         
-    def Charge1():
+    def Charge1(self):
         period=0
         running6 = True        
         if (running6 == True):
@@ -746,12 +759,3 @@ root.title('Chromatography software')
 sendOnlineRequest()
 
 root.mainloop()
-
-
-
-
-
-
-
-
-
