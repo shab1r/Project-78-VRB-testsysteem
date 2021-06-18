@@ -79,39 +79,39 @@ class GUI2(Frame):
     def Anker(self):
         print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         
-    def receive(self):
+    # def receive(self):
         
-        clientStart(self.messagesBuffer)
-        print(self.messagesBuffer)
-        if len(self.messagesBuffer):
-        #Client.receive(messagesBuffer = self.messagesBuffer)
-            l=self.messagesBuffer[0]
-            if('1' in l[0]):
-                print( "motor moet aangestuurd worden")
-                if('1' in l[1]):
-                    print( "motor 1 moet aangestuurd worden")
-                    if('1' in l[2]):
-                        print("motor 1 moet aangezet worden op: ",l[3])
-                    else :
-                        print("motor 1 moet uitgezet worden")
-                elif('2' in l[1]):
-                    print("motor 2 moet aangezet worden")
-                    if('1' in l[2]):
-                         print("motor 2 moet aangezet worden op: ",l[3])
-                    else :
-                         print("motor 2 moet uitgezet worden")
-                elif('3' in l[1]):
-                        print("beide motors moeten aan")
-            elif('2' in l[0]):
-                print("timer moet aangestuurd worden")
-            elif('3' in l[0]):
-                print("geen idee wat aangestuurd moet worden")
-            elif('4' in l[0]):
-                Client.sendRequest("{quit}")
-            else: 
-                print("bericht: ", l)
-                l = []
-                self.messagesBuffer = []
+    #     clientStart(self.messagesBuffer)
+    #     print(self.messagesBuffer)
+    #     if len(self.messagesBuffer):
+    #     #Client.receive(messagesBuffer = self.messagesBuffer)
+    #         l=self.messagesBuffer[0]
+    #         if('1' in l[0]):
+    #             print( "motor moet aangestuurd worden")
+    #             if('1' in l[1]):
+    #                 print( "motor 1 moet aangestuurd worden")
+    #                 if('1' in l[2]):
+    #                     print("motor 1 moet aangezet worden op: ",l[3])
+    #                 else :
+    #                     print("motor 1 moet uitgezet worden")
+    #             elif('2' in l[1]):
+    #                 print("motor 2 moet aangezet worden")
+    #                 if('1' in l[2]):
+    #                      print("motor 2 moet aangezet worden op: ",l[3])
+    #                 else :
+    #                      print("motor 2 moet uitgezet worden")
+    #             elif('3' in l[1]):
+    #                     print("beide motors moeten aan")
+    #         elif('2' in l[0]):
+    #             print("timer moet aangestuurd worden")
+    #         elif('3' in l[0]):
+    #             print("geen idee wat aangestuurd moet worden")
+    #         elif('4' in l[0]):
+    #             Client.sendRequest("{quit}")
+    #         else: 
+    #             print("bericht: ", l)
+    #             l = []
+    #             self.messagesBuffer = []
                 
          
     def widgets(self):
