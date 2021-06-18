@@ -38,7 +38,7 @@ class GUI2(Frame):
         self.running = False
         self.running2 = False
         self.running3 = False
-        self.running4 = False
+        self.addedUp = False
         self.addedUp = False
         self.resetted = True
         self.resetted2 = True
@@ -331,16 +331,15 @@ class GUI2(Frame):
         root.after(1, self.update_time)
         
     def start(self):
-        if  (1.0 >= Power1.get() > 0.0):
-            if (self.running == False):
-                self.running = True
-                self.resetted = False
-                if (self.pauseOdd % 2 == 0):
-                    self.startingTime = time.time()
-                else:
-                    self.resumeTime = time.time()
-                    self.pauseOdd += 1
-                    self.paused = False
+        if (self.running == False):
+            self.running = True
+            self.resetted = False
+            if (self.pauseOdd % 2 == 0):
+                self.startingTime = time.time()
+            else:
+                self.resumeTime = time.time()
+                self.pauseOdd += 1
+                self.paused = False
     
     def pause(self):
         if self.resetted == False:
@@ -407,7 +406,6 @@ class GUI2(Frame):
         root.after(1, self.update_time2)
         
     def start2(self):
-
         if self.running2 == False:
             self.running2 = True
             self.resetted2 = False
@@ -484,8 +482,6 @@ class GUI2(Frame):
         self.enterEntry3.delete(0, END)
         self.enterEntry3.insert(0, time.perf_counter())
         
-    def start4(self):
-        self.running4 = True
         
     def StartSignal(self):
     
@@ -516,9 +512,6 @@ class GUI2(Frame):
         TimeS = (timer() - Start)
         
         root.after(100, self.TimeSet)
-    
-    def pause4(self):
-        self.running4 = False
     
     def Temperature(self):
         
@@ -554,6 +547,8 @@ class GUI2(Frame):
 class Motor_Thread():
     def __init2__(self, Power1, Time1, Power2, Time2):
         self.Run_Motor1()
+        self.Run_Motor2()
+        self.Run_BothMotors()
         self.Power1 = Power1
         self.Power2 = Power2
         self.Time1 = Time1
