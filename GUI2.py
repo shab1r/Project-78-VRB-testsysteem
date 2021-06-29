@@ -28,6 +28,19 @@ Signal = 0
 def sendOnlineRequest():
     json = {'message':[1,1]}
     requests.post('http://95.217.181.53:2000/update_status', json=json)
+    
+def sendOfflineRequest():
+    json = {'message':[1,0]}
+    requests.post('http://95.217.181.53:2000/update_status', json=json)
+    
+def disconnect():
+    Client.sendRequest("{quit}")
+
+def on_closing():
+    if messagebox.askokcancel("Quit", "Do you want to quit?"):
+        sendOfflineRequest()
+        disconnect()
+        root.destroy()
 
 class GUI2(Frame):    
     def __init__(self,master=None):
@@ -512,7 +525,17 @@ class GUI2(Frame):
         TimeS = (timer() - Start)
         
         root.after(100, self.TimeSet)
-    
+
+
+    #this function send battery info to the website
+    def sendBatInfo(self, message):
+        sleep(1000)
+        Client.sendRequest(message)
+
+    def sendBatInfo2(self, message):
+        json = {'message':message}
+        requests.post('http://95.217.181.53:2000/api', json=json)
+
     def Temperature(self):
         
         global T
@@ -532,9 +555,13 @@ class GUI2(Frame):
         
         self.Bat1String = str(round(Bat1, 2))
         self.Battery1Label.config(text=self.Bat1String)
-                
         root.after(1000, self.Battery_1)
-        
+
+        current_dateTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        VoltageBat1Str = [4, 1, current_dateTime, self.Bat1String]
+        self.sendBatInfo2(VoltageBat1Str)
+
+
     def Battery_2(self):
           
         Bat2 = adc.read_adc_voltage(3,0)
@@ -737,10 +764,10 @@ class DynamicUpdate_Bat1():
             plt.pause(0.5)
         return xdata, ydata
 
+sendOnlineRequest()
 root = tk.Tk()
 up = GUI2(root)
 clientStart(up, Motor_Thread)
 root.title('Chromatography software')
-sendOnlineRequest()
-
+root.protocol("WM_DELETE_WINDOW", on_closing)
 root.mainloop()
