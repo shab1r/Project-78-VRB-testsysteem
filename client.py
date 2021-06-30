@@ -23,13 +23,9 @@ class Client():
 
         if message == "{quit}":
             self.clientSocket.close()
+            
 
-        return 200
-
-
-client = Client()
-
-def receive(self, gui, Motor_thread):
+def receive(self, gui, Motor_thread, Charge):
     while True:
         try:
             msg = self.clientSocket.recv(1024).decode("utf8")
@@ -77,9 +73,16 @@ def receive(self, gui, Motor_thread):
                             print("timer 1 moet gereset worden")
 
             elif '3' in l[0]:
-                    print("geen idee wat aangestuurd moet worden")
-            elif '4' in l[0]:
-                    client.sendRequest("{quit}")
+                    print("batterij moet worden opgeladen")
+                    if '1' in l[1]:
+                        voltageAmount = float(l[2].replace(']',''))
+                        Charge.Charge1(gui, voltageAmount)
+                        #functie charge
+                        print("batterij moet worden opgeladen met: ",voltageAmount)
+                    elif '2' in l[1]:
+                        Charge.Charge1_stop(gui)
+                        #functie charge
+                    
             else: 
                 print("no value")
                 
@@ -87,7 +90,8 @@ def receive(self, gui, Motor_thread):
             print("stop the try")
             break
 
-def start(gui, Motor_thread):
-    thread = threading.Thread(target=receive, args=(client,gui,Motor_thread,))
+def start(gui, Motor_thread, client, Charge):
+    thread = threading.Thread(target=receive, args=(client,gui,Motor_thread, Charge))
+    thread.daemon = True
     thread.start()
     client.sendRequest("client")

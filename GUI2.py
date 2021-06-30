@@ -1,6 +1,6 @@
 from lib import *
 
-Client = Client()
+client = Client()
 kit = MotorKit()
 mp = []
 adc = ADC()
@@ -34,13 +34,16 @@ def sendOfflineRequest():
     requests.post('http://95.217.181.53:2000/update_status', json=json)
     
 def disconnect():
-    Client.sendRequest("{quit}")
+    client.sendRequest("{quit}")
+    
+    
 
 def on_closing():
     if messagebox.askokcancel("Quit", "Do you want to quit?"):
         sendOfflineRequest()
         disconnect()
         root.destroy()
+        sys.exit()
 
 class GUI2(Frame):    
     def __init__(self,master=None):
@@ -88,9 +91,6 @@ class GUI2(Frame):
         running6 = False
         ST = self.StartTime()
         
-        
-    def Anker(self):
-        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         
     # def receive(self):
         
@@ -271,7 +271,7 @@ class GUI2(Frame):
         self.Chargeentry = tk.Entry(self.chargeFrame, width=20, textvariable=Ch)
         self.Chargeentry.grid(row=2, column=5, columnspan = 2, padx=5, pady=5)
         
-        self.StartCharge = tk.Button(self.chargeFrame, text="Start", command=lambda:Charge.Charge1()).grid(column=5,row=3, padx=5, pady=5)
+        self.StartCharge = tk.Button(self.chargeFrame, text="Start", command=lambda:Charge.Charge1(self)).grid(column=5,row=3, padx=5, pady=5)
         self.Stopcharge = tk.Button(self.chargeFrame, text="Stop", command=lambda:Charge.Charge1_stop(self)).grid(row=3,column=6, padx=5, pady=5)
         
         self.Chargeentry.insert(0, "")
@@ -500,13 +500,13 @@ class GUI2(Frame):
     
         global Signal
         
-        Signal = adc.read_adc_voltage(8,0)
+        Signal = adc.read_adc_voltage(2,0)
     
     def SignalSet(self):
         
         global ChromS
         
-        ChromS = (adc.read_adc_voltage(8,0) - Signal)
+        ChromS = (adc.read_adc_voltage(2,0) - Signal)
         
         root.after(100, self.SignalSet)
     
@@ -529,12 +529,9 @@ class GUI2(Frame):
 
     #this function send battery info to the website
     def sendBatInfo(self, message):
-        sleep(1000)
-        Client.sendRequest(message)
+        client.sendRequest(message)
+        #client.clientSocket.close()
 
-    def sendBatInfo2(self, message):
-        json = {'message':message}
-        requests.post('http://95.217.181.53:2000/api', json=json)
 
     def Temperature(self):
         
@@ -547,21 +544,29 @@ class GUI2(Frame):
                 
         root.after(1000, self.Temperature)
     
+    
+    
+    def sendBatInfo2(self, message):
+        json = {'message':message}
+        requests.post('http://95.217.181.53:2000/api', json=json)
+    
     def Battery_1(self):
         
         global Bat1
         
-        Bat1 = adc.read_adc_voltage(8,0)
+        Bat1 = adc.read_adc_voltage(2,0)
         
         self.Bat1String = str(round(Bat1, 2))
         self.Battery1Label.config(text=self.Bat1String)
         root.after(1000, self.Battery_1)
 
+
         current_dateTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         VoltageBat1Str = [4, 1, current_dateTime, self.Bat1String]
-        self.sendBatInfo2(VoltageBat1Str)
-
-
+        
+        if (Bat1 > 0.0): 
+            self.sendBatInfo2(VoltageBat1Str)
+        
     def Battery_2(self):
           
         Bat2 = adc.read_adc_voltage(3,0)
@@ -656,15 +661,20 @@ class Charge():
         self.Charge1()
         self.Charge1_stop()
         self.running6 = False
+        self.Ch = 0.0
         
-    def Charge1(self):
+    def Charge1(self, manualVoltage = 0):
+        
+        if manualVoltage > 0.0:
+            Ch.set(manualVoltage)
+        
+        
         period=0
         running6 = True        
         if (running6 == True):
             while True:
                 period+=1
                 dac.set_dac_voltage(2, Ch.get())
-                print ("This While True works")
                 if period>100:
                     period=0
                     break
@@ -676,7 +686,6 @@ class Charge():
             while True:
                 period+=1
                 dac.set_dac_voltage(2, 0.0)
-                print ("This While True works")
                 if period>100:
                     period=0
                     break
@@ -763,11 +772,13 @@ class DynamicUpdate_Bat1():
             DynamicUpdate_Bat1.on_running_Bat1(self, xdata, ydata)
             plt.pause(0.5)
         return xdata, ydata
+        
 
 sendOnlineRequest()
 root = tk.Tk()
 up = GUI2(root)
-clientStart(up, Motor_Thread)
+clientStart(up, Motor_Thread, client, Charge)
 root.title('Chromatography software')
+
 root.protocol("WM_DELETE_WINDOW", on_closing)
 root.mainloop()

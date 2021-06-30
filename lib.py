@@ -33,4 +33,4 @@ from client import Client
 from tkinter import messagebox
 from client import start as clientStart
 import requests
-import atexit
+import sys
