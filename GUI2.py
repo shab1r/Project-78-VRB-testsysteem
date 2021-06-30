@@ -55,7 +55,7 @@ class GUI2(Frame):
         self.running2 = False
         self.running3 = False
         self.addedUp = False
-        self.addedUp = False
+        self.addedUp2 = False
         self.resetted = True
         self.resetted2 = True
         self.pauseOdd = 0
@@ -91,40 +91,6 @@ class GUI2(Frame):
         running6 = False
         ST = self.StartTime()
         
-        
-    # def receive(self):
-        
-    #     clientStart(self.messagesBuffer)
-    #     print(self.messagesBuffer)
-    #     if len(self.messagesBuffer):
-    #     #Client.receive(messagesBuffer = self.messagesBuffer)
-    #         l=self.messagesBuffer[0]
-    #         if('1' in l[0]):
-    #             print( "motor moet aangestuurd worden")
-    #             if('1' in l[1]):
-    #                 print( "motor 1 moet aangestuurd worden")
-    #                 if('1' in l[2]):
-    #                     print("motor 1 moet aangezet worden op: ",l[3])
-    #                 else :
-    #                     print("motor 1 moet uitgezet worden")
-    #             elif('2' in l[1]):
-    #                 print("motor 2 moet aangezet worden")
-    #                 if('1' in l[2]):
-    #                      print("motor 2 moet aangezet worden op: ",l[3])
-    #                 else :
-    #                      print("motor 2 moet uitgezet worden")
-    #             elif('3' in l[1]):
-    #                     print("beide motors moeten aan")
-    #         elif('2' in l[0]):
-    #             print("timer moet aangestuurd worden")
-    #         elif('3' in l[0]):
-    #             print("geen idee wat aangestuurd moet worden")
-    #         elif('4' in l[0]):
-    #             Client.sendRequest("{quit}")
-    #         else: 
-    #             print("bericht: ", l)
-    #             l = []
-    #             self.messagesBuffer = []
                 
          
     def widgets(self):
@@ -166,74 +132,69 @@ class GUI2(Frame):
         ##### power control motor 1 #####
         
         self.powerFrame1 = tk.LabelFrame(root, text='Power Control Motor 1')
-        self.powerFrame1.grid(row=1, column=0, columnspan = 3, rowspan = 3, padx=5, pady=5)
+        self.powerFrame1.grid(row=1, column=0, columnspan = 3, rowspan = 3, padx=5, pady=2)
         
         self.label_power1 = tk.Label(self.powerFrame1, text="Fractional power")
-        self.label_power1.grid(row=1, column=0, padx=5, pady=5)
+        self.label_power1.grid(row=1, column=0, padx=5, pady=2)
         
         self.Powerentry = tk.Entry(self.powerFrame1, width=7, textvariable=Power1)     
-        self.Powerentry.grid(row=1, column=1, padx=5, pady=5)
+        self.Powerentry.grid(row=1, column=1, padx=5, pady=2)
         
         self.enterEntry1 = tk.Entry(self.powerFrame1, width=7, textvariable= "")
-        self.enterEntry1.grid(row=1, column=2, padx=5, pady=5)
+        self.enterEntry1.grid(row=1, column=2, padx=5, pady=2)
         
-        self.StartMotor1Button = tk.Button(self.powerFrame1, text="Start motor 1", command=lambda:[Motor_Thread.Run_Motor1(self), self.returnEntry(arg=None)]).grid(column=2,row=2, padx=5, pady=5)
-        self.StopMotor1Button = tk.Button(self.powerFrame1, text="Stop Motor1", command=lambda:Motor_Thread.turnOffMotor1(self)).grid(row=3,column=2, padx=5, pady=5)
+        self.StartMotor1Button = tk.Button(self.powerFrame1, text="Start motor 1", command=lambda:[Motor_Thread.Run_Motor1(self), self.returnEntry(arg=None)]).grid(column=2,row=2, padx=5, pady=2)
+        self.StopMotor1Button = tk.Button(self.powerFrame1, text="Stop Motor 1", command=lambda:Motor_Thread.turnOffMotor1(self)).grid(row=3,column=2, padx=5, pady=2)
         
         
         self.enterEntry1.insert(0, "")
         self.Powerentry.insert(0, "")
         
         ##### widget for counter motor 1#####
-        
         self.label_power1 = tk.Label(self.powerFrame1, text="Timer")
-        self.label_power1.grid(row=2, column=0, padx=5, pady=5)
+        self.label_power1.grid(row=2, column=0, padx=5, pady=2)
         self.show = tk.Label(self.powerFrame1, width=7, text='00:00:00', background="black", foreground="yellow", font=('Helvetica',20))
-        self.show.grid(row=3, column=0, padx=5, pady=5)
+        self.show.grid(row=3, column=0, padx=5, pady=2)
         
-#         self.Startstopwatch = tk.Button(self.powerFrame1, text="Start", command=self.start).grid(column=1,row=3, padx=5, pady=5)
-        self.Startstopwatch = tk.Button(self.powerFrame1, text="Reset", command=self.resetTime).grid(column=2,row=4, padx=5, pady=5)
+        #self.Startstopwatch = tk.Button(self.powerFrame1, text="Start", command=self.start).grid(column=1,row=3, padx=5, pady=5)
+        self.Resetstopwatch = tk.Button(self.powerFrame1, text="Reset", command=self.resetTime).grid(column=2,row=4, padx=5, pady=2)
         
         ##### power control motor 2 #####
-
         self.powerFrame2 = tk.LabelFrame(root, text='Power Control Motor 2')
-        self.powerFrame2.grid(row=4, column=0, columnspan = 3, rowspan = 2, padx=5, pady=5)
+        self.powerFrame2.grid(row=4, column=0, columnspan = 3, rowspan = 2, padx=5, pady=2)
 
         self.label_power2 = tk.Label(self.powerFrame2, text="Fractional power")
-        self.label_power2.grid(row=4, column=0, padx=5, pady=5)
+        self.label_power2.grid(row=4, column=0, padx=5, pady=2)
         
         self.Powerentry2 = tk.Entry(self.powerFrame2, width=7, textvariable=Power2)
-        self.Powerentry2.grid(row=4, column=1, padx=5, pady=5)
+        self.Powerentry2.grid(row=4, column=1, padx=5, pady=2)
         
         self.enterEntry2 = tk.Entry(self.powerFrame2, width=7, textvariable= "")
-        self.enterEntry2.grid(row=4, column=2, padx=5, pady=5)
+        self.enterEntry2.grid(row=4, column=2, padx=5, pady=2)
         
-        self.StartMotor2Button = tk.Button(self.powerFrame2, text="Start Motor 2", command=lambda:[Motor_Thread.Run_Motor2(self), self.returnEntry2(arg=None)]).grid(column=2,row=5, padx=5, pady=5)
-        self.StopMotor2Button = tk.Button(self.powerFrame2, text="Stop Motor 2", command=lambda:Motor_Thread.turnOffMotor2(self)).grid(row=6,column=2, padx=5, pady=5)
+        self.StartMotor2Button = tk.Button(self.powerFrame2, text="Start Motor 2", command=lambda:[Motor_Thread.Run_Motor2(self), self.returnEntry2(arg=None)]).grid(column=2,row=5, padx=5, pady=2)
+        self.StopMotor2Button = tk.Button(self.powerFrame2, text="Stop Motor 2", command=lambda:Motor_Thread.turnOffMotor2(self)).grid(row=6,column=2, padx=5, pady=2)
         
         self.enterEntry2.insert(0, "")
         self.Powerentry2.insert(0, "")
         
         ##### widget for counter motor 2 #####
-        
         self.label_power2 = tk.Label(self.powerFrame2, text="Timer")
-        self.label_power2.grid(row=5, column=0, padx=5, pady=5)     
+        self.label_power2.grid(row=5, column=0, padx=5, pady=2)     
         self.show2 = tk.Label(self.powerFrame2, width=7, text='00:00:00', background="black", foreground="yellow", font=('Helvetica',20))
-        self.show2.grid(row=6, column=0, padx=5, pady=5)
+        self.show2.grid(row=6, column=0, padx=5, pady=2)
         
-#         self.Startstopwatch2 = tk.Button(self.powerFrame2, text="Start", command=self.start2).grid(column=1,row=6, padx=5, pady=5)
-        self.Startstopwatch2 = tk.Button(self.powerFrame2, text="Reset", command=self.resetTime2).grid(column=2,row=7, padx=5, pady=5)
+        # self.Startstopwatch2 = tk.Button(self.powerFrame2, text="Start", command=self.start2).grid(column=1,row=6, padx=5, pady=5)
+        self.Resetstopwatch2 = tk.Button(self.powerFrame2, text="Reset", command=self.resetTime2).grid(column=2,row=7, padx=5, pady=2)
         
         ##### start/stop both motors #####
-        
         self.buttonFrame1 = tk.LabelFrame(root, text='Both motor control')
-        self.buttonFrame1.grid(row=6, column=0, columnspan = 2, padx=5, pady=5)
+        self.buttonFrame1.grid(row=6, column=0, columnspan = 2, padx=5, pady=2)
         
-        self.Start_both_MotorsButton = tk.Button(self.buttonFrame1, width=15, text="Start Both Motors", command=lambda:[Motor_Thread.Run_BothMotors(self), Graph.returnEntry(self, arg=None), self.returnEntry(arg=None),self.returnEntry2(arg=None)]).grid(column=0,row=6, padx=5, pady=5)
-        self.Stop_both_MotorsButton = tk.Button(self.buttonFrame1, width=15, text="Stop Both Motors", command=lambda:Motor_Thread.turnBothMotorsOff(self)).grid(row=6,column=1, padx=5, pady=5)
+        self.Start_both_MotorsButton = tk.Button(self.buttonFrame1, width=15, text="Start Both Motors", command=lambda:[Motor_Thread.Run_BothMotors(self), self.returnEntry(arg=None),self.returnEntry2(arg=None)]).grid(column=0,row=3, padx=5, pady=2)
+        self.Stop_both_MotorsButton = tk.Button(self.buttonFrame1, width=15, text="Stop Both Motors", command=lambda:Motor_Thread.turnBothMotorsOff(self)).grid(row=3,column=1, padx=5, pady=2)
         
         ##### save directory file #####
-        
         self.name = tk.StringVar()
         self.save_directoryFrame = tk.LabelFrame(root, text='Log File Directory')
         self.save_directoryFrame.grid(row=4, column=3, columnspan = 2, padx=5, pady=5)
@@ -249,14 +210,12 @@ class GUI2(Frame):
         self.TemperatureLabel.grid(column=1,row=1, padx=5, pady=5)
         
         ##### Battery 1 voltage ######
-        
         self.Bat1Frame = tk.LabelFrame(root, text='Battery 1 voltage', width=100)
         self.Bat1Frame.grid(row=2, column=3, columnspan = 2, padx=5, pady=5)
         self.Battery1Label = tk.Label(self.Bat1Frame, text='0', fg="yellow", bg="black", width=20)
         self.Battery1Label.grid(column=3,row=2, padx=5, pady=5)
         
-                ##### Battery charge voltage ######
-        
+        ##### Battery charge voltage ######
         self.Bat2Frame = tk.LabelFrame(root, text='Battery 2 voltage', width=100)
         self.Bat2Frame.grid(row=3, column=3, columnspan = 2, padx=5, pady=5)
 
@@ -264,7 +223,6 @@ class GUI2(Frame):
         self.Battery2Label.grid(column=3,row=3, padx=5, pady=5)
         
         ##### Battery charge control #####
-
         self.chargeFrame = tk.LabelFrame(root,  text='Battery charge voltage')
         self.chargeFrame.grid(row=1, column=5, columnspan = 2, rowspan = 4, padx=5, pady=5)
         
@@ -277,7 +235,6 @@ class GUI2(Frame):
         self.Chargeentry.insert(0, "")
         
         ##### Start Measurement Button #####
-            
         self.Start_Measurement = tk.Button(self.chargeFrame, bg="green2", width=15, text="Start Measurement", command=lambda:[self.StartTime(), Motor_Thread.Run_BothMotors(self), DynamicUpdate_Bat1.__callBat1__(self), self.returnEntry(arg=None), self.returnEntry2(arg=None),self.returnEntry3(arg=None), Charge.Charge1(self)]).grid(column=5, row=4, columnspan=2, padx=5, pady=5)
         self.Stop_Measurement = tk.Button(self.chargeFrame, bg="red", width =15, text="Stop Measurement", command=lambda:[self.pause3(), Motor_Thread.turnBothMotorsOff(self), Charge.Charge1_stop(self)]).grid(row=5,column=5, columnspan=2, padx=5, pady=5)
         self.Show_Graph = tk.Button(self.chargeFrame, bg="gold", width=15, text="Plot Temperature", command=lambda:DynamicUpdate.__call__(self)).grid(column=5,row=6, columnspan=2, padx=5, pady=5)
@@ -289,8 +246,7 @@ class GUI2(Frame):
         self.Start_Measurement = tk.Button(self.chargeFrame, bg="green2", width=15, text="Start Chromatogram", command=lambda:[RemoteProg2.Remote()]).grid(column=5, row=6, columnspan=2, padx=5, pady=5)
 
 
-### Performance time entry ###
-        
+        ### Performance time entry ###
         self.enterEntry3 = tk.Entry(self.chargeFrame, width=7, textvariable= "")
         self.enterEntry3.grid(row=7, column=5, columnspan=2, padx=5, pady=5)
 
@@ -577,14 +533,13 @@ class GUI2(Frame):
         root.after(1000, self.Battery_2)
 
 class Motor_Thread():
-    def __init2__(self, Power1, Time1, Power2, Time2):
+    def __init2__(self, Power1, Power2):
         self.Run_Motor1()
         self.Run_Motor2()
         self.Run_BothMotors()
         self.Power1 = Power1
         self.Power2 = Power2
-        self.Time1 = Time1
-        self.Time2 = Time2
+
         
      
     def Run_Motor1(self, manualPower=0):
@@ -602,7 +557,7 @@ class Motor_Thread():
             kit.motor1.throttle = Power1.get()
             GUI2.start(self)
 
-            #showt error message wanneer de fractional power niet tussen de 1 en o ligt
+            #showt error message wanneer de fractional power niet tussen de 1 en 0 ligt
         else:
             messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1)")
 
@@ -618,7 +573,7 @@ class Motor_Thread():
             kit.motor2.throttle = Power2.get()
             GUI2.start2(self)
         else:
-            messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1)")
+            messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 2)")
 
     
     def Run_BothMotors(self, manualPower=0):
@@ -777,7 +732,7 @@ class DynamicUpdate_Bat1():
 sendOnlineRequest()
 root = tk.Tk()
 up = GUI2(root)
-clientStart(up, Motor_Thread, client, Charge)
+clientStart(up, Motor_Thread, client, Charge, GUI2)
 root.title('Chromatography software')
 
 root.protocol("WM_DELETE_WINDOW", on_closing)

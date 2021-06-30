@@ -25,7 +25,7 @@ class Client():
             self.clientSocket.close()
             
 
-def receive(self, gui, Motor_thread, Charge):
+def receive(self, gui, Motor_thread, Charge, GUI2):
     while True:
         try:
             msg = self.clientSocket.recv(1024).decode("utf8")
@@ -69,8 +69,16 @@ def receive(self, gui, Motor_thread, Charge):
                     print("timer moet aangestuurd worden")
                     if '1' in l[1]:
                         print("timer 1 moet aangestuurd worden")
-                        if '3' in l[2]:
-                            print("timer 1 moet gereset worden")
+                        GUI2.resetTime(gui)
+                        
+                    if '2' in l[1]:
+                        print("timer 2 moet gereset worden")
+                        GUI2.resetTime2(gui)
+                    
+                    elif '3' in l[1]:
+                        print("beide timers moeten gereset worden")
+                        GUI2.resetTime(gui)
+                        GUI2.resetTime2(gui)
 
             elif '3' in l[0]:
                     print("batterij moet worden opgeladen")
@@ -90,8 +98,8 @@ def receive(self, gui, Motor_thread, Charge):
             print("stop the try")
             break
 
-def start(gui, Motor_thread, client, Charge):
-    thread = threading.Thread(target=receive, args=(client,gui,Motor_thread, Charge))
+def start(gui, Motor_thread, client, Charge, GUI2):
+    thread = threading.Thread(target=receive, args=(client,gui,Motor_thread, Charge, GUI2))
     thread.daemon = True
     thread.start()
     client.sendRequest("client")
