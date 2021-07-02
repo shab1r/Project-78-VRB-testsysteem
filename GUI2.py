@@ -34,7 +34,7 @@ def sendOfflineRequest():
     requests.post('http://95.217.181.53:2000/update_status', json=json)
     
 def disconnect():
-    client.sendRequest("{quit}")
+    client.sendRequest("{quit}", "null")
     
     
 
@@ -81,8 +81,10 @@ class GUI2(Frame):
         self.Temp = [0]
         self.Temperature()
         self.tempString = str(T)
-        self.Battery_1()
+        self.Battery_1() 
         self.Battery_2()
+        self.BatString1 = str(T)
+        self.BatString2 = str(T)
         self.StartTime()
         self.returnEntry()
         self.TimeSet()
@@ -472,7 +474,7 @@ class GUI2(Frame):
             
         Start = timer()
         
-        print ('Hey! Time is started!')
+        #print ('Hey! Time is started!')
 
     def TimeSet(self):
         
@@ -484,9 +486,19 @@ class GUI2(Frame):
 
 
     #this function send battery info to the website
-    def sendBatInfo(self, message):
-        client.sendRequest(message)
+    def sendBatInfo(self, message, name):
+        client.sendRequest(message = message, name = name)
         #client.clientSocket.close()
+        
+    def sendTemp(self, message, name):
+        client.sendRequest(message = message, name = name)
+    def sendTimer(self, message, name):
+        client.sendRequest(message = message, name = name)
+        
+    def sendBatInfoPost(self, message):
+        json = {'message':message}
+        requests.post('http://95.217.181.53:2000/api', json=json)
+        
 
 
     def Temperature(self):
@@ -499,12 +511,18 @@ class GUI2(Frame):
         self.TemperatureLabel.config(text=self.tempString)
                 
         root.after(1000, self.Temperature)
+        
+        
+        current_dateTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        TempStr = [4, 3, current_dateTime, self.tempString]
+        
+        #if T> 0:
+        #self.tempString
+        #self.sendTemp(message = TempStr, name = "temp_live_data")
+        self.sendBatInfoPost(TempStr)
     
     
     
-    def sendBatInfo2(self, message):
-        json = {'message':message}
-        requests.post('http://95.217.181.53:2000/api', json=json)
     
     def Battery_1(self):
         
@@ -512,25 +530,35 @@ class GUI2(Frame):
         
         Bat1 = adc.read_adc_voltage(2,0)
         
-        self.Bat1String = str(round(Bat1, 2))
-        self.Battery1Label.config(text=self.Bat1String)
+        self.BatString1 = str(round(Bat1, 2))
+        self.Battery1Label.config(text=self.BatString1)
         root.after(1000, self.Battery_1)
 
 
         current_dateTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        VoltageBat1Str = [4, 1, current_dateTime, self.Bat1String]
+        VoltageBat1Str = [4, 1, current_dateTime, self.BatString1]
         
-        if (Bat1 > 0.0): 
-            self.sendBatInfo2(VoltageBat1Str)
         
+        #self.sendBatInfo(message = VoltageBat1Str, name = "voltage_1_live_data")
+        self.sendBatInfoPost(VoltageBat1Str)
+        
+        #timer1 = [5, 1, 1, self.timeString]
+        #self.sendTimer(message = timer1 , name= "client")
+        #timeString
     def Battery_2(self):
           
         Bat2 = adc.read_adc_voltage(3,0)
         
-        self.Bat2String = str(round(Bat2, 2))
-        self.Battery2Label.config(text=self.Bat2String)
-        
+        self.BatString2 = str(round(Bat2, 2))
+        self.Battery2Label.config(text=self.BatString2)
         root.after(1000, self.Battery_2)
+        
+        current_dateTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        VoltageBat2Str = [4, 2, current_dateTime, self.BatString2]
+        
+        
+        #self.sendBatInfo(message = VoltageBat2Str, name = "voltage_2_live_data")
+        self.sendBatInfoPost(VoltageBat2Str)
 
 class Motor_Thread():
     def __init2__(self, Power1, Power2):
@@ -551,6 +579,8 @@ class Motor_Thread():
             self.enterEntry1.delete(0, END)
             self.enterEntry1.insert(0, Power1.get())
             GUI2.start(self)
+            
+            
 
         # wanneer de motor vanuit de raspberry wordt aangesuurt gaat hij deze else statement in
         elif 1.0 >= float(Power1.get()) > 0:
@@ -576,10 +606,15 @@ class Motor_Thread():
             messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 2)")
 
     
-    def Run_BothMotors(self, manualPower=0):
-        if 1.0 >= manualPower > 0.0:
-            Power1.set(manualPower)
-            Power2.set(manualPower)
+    def Run_BothMotors(self, manualPower1=0, manualPower2=0):
+        
+        if (1.0 >= manualPower1 > 0.0) and (1.0 >= manualPower2 > 0.0):
+            Power2.set(manualPower2)
+            Power1.set(manualPower1)
+            print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+            print(manualPower1)
+            print(manualPower2)
+            print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
             kit.motor1.throttle = Power1.get()
             kit.motor2.throttle = Power2.get()
             self.enterEntry1.delete(0, END)
@@ -588,24 +623,30 @@ class Motor_Thread():
             self.enterEntry2.insert(0, Power2.get())
             GUI2.start(self)
             GUI2.start2(self)
+            
 
-        elif 1.0 >= Power1.get() > 0.0:
-            kit.motor1.throttle = Power1.get()
-            kit.motor2.throttle = Power2.get()
-            GUI2.start(self)
-            GUI2.start2(self)
+        elif (1.0 >= Power1.get() > 0.0) and (1.0 >= Power2.get() > 0.0):
+           kit.motor1.throttle = Power1.get()
+           kit.motor2.throttle = Power2.get()
+           GUI2.start(self)
+           GUI2.start2(self)
+           
         else: messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1  en of 2)")
 
 
     def turnOffMotor1(self):
+        Power1.set(0.0)
         kit.motor1.throttle = 0.0
         GUI2.pause(self)
     
     def turnOffMotor2(self):
+        Power2.set(0.0)
         kit.motor2.throttle = 0.0
         GUI2.pause2(self)
         
     def turnBothMotorsOff(self):
+        Power1.set(0.0)
+        Power2.set(0.0)
         kit.motor1.throttle = 0.0
         kit.motor2.throttle = 0.0
         GUI2.pause(self)
@@ -727,13 +768,61 @@ class DynamicUpdate_Bat1():
             DynamicUpdate_Bat1.on_running_Bat1(self, xdata, ydata)
             plt.pause(0.5)
         return xdata, ydata
-        
 
 sendOnlineRequest()
 root = tk.Tk()
 up = GUI2(root)
 clientStart(up, Motor_Thread, client, Charge, GUI2)
+
+StartTime=time.time()
+
+def action() :
+    timer1 = up.timeString
+    timer2 = up.timeString2
+    #self.tempString
+    #self.sendTemp(message = TempStr, name = "temp_live_data")
+    #up.sendTimer(message = timer1 , name= "client")
+    current_dateTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    TempStr = [4, 3, current_dateTime, up.tempString]
+        
+        #if T> 0:
+        #self.tempString
+        #self.sendTemp(message = TempStr, name = "temp_live_data")
+    up.sendTemp(message = TempStr, name = "client")
+    current_dateTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    VoltageBat1Str = [4, 1, current_dateTime, up.BatString1] 
+    up.sendBatInfo(message = VoltageBat1Str, name = "client")
+    VoltageBat2Str = [4, 2, current_dateTime, up.BatString2] 
+    up.sendBatInfo(message = VoltageBat2Str, name = "client")
+
+
+class setInterval :
+    def __init__(self,interval,action) :
+        self.interval=interval
+        self.action=action
+        self.stopEvent=threading.Event()
+        thread=threading.Thread(target=self.__setInterval)
+        thread.start()
+
+    def __setInterval(self) :
+        nextTime=time.time()+self.interval
+        while not self.stopEvent.wait(nextTime-time.time()) :
+            nextTime+=self.interval
+            self.action()
+
+    def cancel(self) :
+        self.stopEvent.set()
+
+# start action every 0.6s
+inter=setInterval(1,action)
+
+# will stop interval in 5s
+#t=threading.Timer(99999,inter.cancel)
+#t.start()
+#============
+
 root.title('Chromatography software')
 
 root.protocol("WM_DELETE_WINDOW", on_closing)
 root.mainloop()
+
