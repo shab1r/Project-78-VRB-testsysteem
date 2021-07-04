@@ -24,27 +24,29 @@ TimeS = 0
 Bat1 = 0
 Bat2 = 0
 Signal = 0
-
+# This function wil send a message to the website to show that the code is running
 def sendOnlineRequest():
     json = {'message':[1,1]}
     requests.post('http://95.217.181.53:2000/update_status', json=json)
     
+# This function gets called when the application is clossing
 def sendOfflineRequest():
     json = {'message':[1,0]}
     requests.post('http://95.217.181.53:2000/update_status', json=json)
-    
+
+# This function makes it Possibly to safely close the program
 def disconnect():
     client.sendRequest("{quit}", "null")
     
     
-
+# This function gets called when the user wants to close the application and he has to say yes or no
 def on_closing():
     if messagebox.askokcancel("Quit", "Do you want to quit?"):
         sendOfflineRequest()
         disconnect()
         root.destroy()
         sys.exit()
-
+# This class is where the GUI is made
 class GUI2(Frame):    
     def __init__(self,master=None):
         Frame.__init__(self,master)
@@ -94,7 +96,7 @@ class GUI2(Frame):
         ST = self.StartTime()
         
                 
-         
+    # In this function all the widgets are made
     def widgets(self):
 
         global Power1 
@@ -255,7 +257,7 @@ class GUI2(Frame):
         self.enterEntry1.insert(0, "")
         self.enterEntry2.insert(0, "")
         self.enterEntry3.insert(0, "")
-    
+    # This function is for the timers 
     def update_time(self):
         
         if (self.running == True):
@@ -300,7 +302,8 @@ class GUI2(Frame):
             self.timeString = minutesString + ':' + secondsString + ':' + milsString
             self.show.config(text=self.timeString)
         root.after(1, self.update_time)
-        
+
+    # This is the start for timer 1
     def start(self):
         if (self.running == False):
             self.running = True
@@ -311,7 +314,6 @@ class GUI2(Frame):
                 self.resumeTime = time.time()
                 self.pauseOdd += 1
                 self.paused = False
-    
     def pause(self):
         if self.resetted == False:
             self.running = False
@@ -320,7 +322,7 @@ class GUI2(Frame):
                 self.timePause = time.time()
                 self.paused = True
                 self.addedUp = False
-    
+    # This is the reset for timer 1
     def resetTime(self):
         self.resetted = True
         self.running = False
@@ -331,7 +333,7 @@ class GUI2(Frame):
         self.sumPausedTimes = 0.0
         self.startingTime = time.time()
         
-        
+    # This function is for the timers 
     def update_time2(self):
         if (self.running2 == True):
             self.pausedTime2 = self.resumeTime2 - self.timePause2
@@ -376,6 +378,7 @@ class GUI2(Frame):
             self.show2.config(text=self.timeString2)
         root.after(1, self.update_time2)
         
+    # This is the start for timer 2
     def start2(self):
         if self.running2 == False:
             self.running2 = True
@@ -388,6 +391,7 @@ class GUI2(Frame):
                 self.paused2 = False
 
     
+    # This is the pause for timer 2
     def pause2(self):
         if self.resetted2 == False:
             self.running2 = False
@@ -397,6 +401,7 @@ class GUI2(Frame):
                 self.paused2 = True
                 self.addedUp2 = False
     
+    # This is the reset for timer 2
     def resetTime2(self):
         self.resetted2 = True
         self.running2 = False
@@ -560,6 +565,7 @@ class GUI2(Frame):
         #self.sendBatInfo(message = VoltageBat2Str, name = "voltage_2_live_data")
         self.sendBatInfoPost(VoltageBat2Str)
 
+# This class is where the motors are controlled
 class Motor_Thread():
     def __init2__(self, Power1, Power2):
         self.Run_Motor1()
@@ -569,7 +575,7 @@ class Motor_Thread():
         self.Power2 = Power2
 
         
-     
+    # This is the funtion for motor 1
     def Run_Motor1(self, manualPower=0):
 
         # kijkt of manualPower(de fractional power vanuit de webinterface) tussen de 1 en 0 ligt
@@ -591,6 +597,7 @@ class Motor_Thread():
         else:
             messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1)")
 
+    # This is the funtion for motor 2
     def Run_Motor2(self, manualPower=0):
         if 1.0 >= manualPower > 0:
             Power2.set(manualPower)
@@ -606,6 +613,7 @@ class Motor_Thread():
             messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 2)")
 
     
+    # This is the funtion for both motor 
     def Run_BothMotors(self, manualPower1=0, manualPower2=0):
         
         if (1.0 >= manualPower1 > 0.0) and (1.0 >= manualPower2 > 0.0):
@@ -633,17 +641,19 @@ class Motor_Thread():
            
         else: messagebox.showerror("Invalide invoer", "Voer een getal boven de 0.0 en een getal met een maximale waarde van 1.0(Motor 1  en of 2)")
 
-
+    # This functon stops motor 1
     def turnOffMotor1(self):
         Power1.set(0.0)
         kit.motor1.throttle = 0.0
         GUI2.pause(self)
     
+    # This functon stops motor 2
     def turnOffMotor2(self):
         Power2.set(0.0)
         kit.motor2.throttle = 0.0
         GUI2.pause2(self)
         
+    # This functon stops both motors
     def turnBothMotorsOff(self):
         Power1.set(0.0)
         Power2.set(0.0)
@@ -651,14 +661,14 @@ class Motor_Thread():
         kit.motor2.throttle = 0.0
         GUI2.pause(self)
         GUI2.pause2(self)
-        
+# This the the charge class where a battery can get charged
 class Charge():
     def __init3__(self, Ch):
         self.Charge1()
         self.Charge1_stop()
         self.running6 = False
         self.Ch = 0.0
-        
+    # This function gets called when a we want to charge a battery
     def Charge1(self, manualVoltage = 0):
         
         if manualVoltage > 0.0:
@@ -675,6 +685,7 @@ class Charge():
                     period=0
                     break
         
+    # This function gets called when a we want to stop charging a battery
     def Charge1_stop(self):    
         period=0
         self.running6 = True        
@@ -686,7 +697,7 @@ class Charge():
                     period=0
                     break
         
-
+# This class send information about the batteries
 class DynamicUpdate():
     
     def on_launch(self):
@@ -795,7 +806,7 @@ def action() :
     VoltageBat2Str = [4, 2, current_dateTime, up.BatString2] 
     up.sendBatInfo(message = VoltageBat2Str, name = "client")
 
-
+# This class class the accion function every second
 class setInterval :
     def __init__(self,interval,action) :
         self.interval=interval
